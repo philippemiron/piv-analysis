@@ -21,8 +21,6 @@
 #include <vector>
 //#include <mpi.h>
 
-using namespace std;
-
 // LES MACROS LES PLUS UTILES
 #ifndef signe
 #define signe(a)   ( ((a)>=0.0) ? (1.0) : (-1.0) )

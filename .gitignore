@@ -17,3 +17,8 @@ data/*
 *.dat
 *.plt
 *.lay
+
+# Temp files
+*.cpp~
+*.hpp~
+Makefile~

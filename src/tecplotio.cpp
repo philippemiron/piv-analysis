@@ -1,18 +1,18 @@
 // List of functions to deal with Tecplot files
 #include "tecplotio.hpp"
 
-void Read_Tp2D_Velocities(string file, int Nx, int Ny, int k, double** x, double** y, double*** u, double*** v) {
-	ifstream iofile;
+void Read_Tp2D_Velocities(std::string file, int Nx, int Ny, int k, double** x, double** y, double*** u, double*** v) {
+	std::ifstream iofile;
 	iofile.open(file.c_str());
 	if(!iofile) { // file couldn't be opened
-		cerr << "Error: could not be open file: " << file << endl;
+		std::cerr << "Error: could not be open file: " << file << std::endl;
 		exit(1);
 	}
 	
 	// saute l'entete dans le fichier
-	string stemp;
-	getline(iofile, stemp);
-	getline(iofile, stemp);
+	std::string stemp;
+	std::getline(iofile, stemp);
+	std::getline(iofile, stemp);
 	
 	double dtemp;
 	for (int j=0; j<Ny; j++)
@@ -31,16 +31,16 @@ void Read_Tp2D_Velocities(string file, int Nx, int Ny, int k, double** x, double
 	iofile.close();
 }
 
-string Filename(string prefixe, string suffixe, int numero) {
+std::string Filename(std::string prefixe, std::string suffixe, int numero) {
 
-	// Transform number into substring	
-	stringstream ss;
+	// Transform number into substd::string	
+	std::stringstream ss;
 	ss << numero;
-	string num;
+	std::string num;
 	ss >> num;
 	
 	// Adding padding of 0
-	string padding;
+	std::string padding;
 	if (numero < 10)
 	{
 		for (int i=0;i<3;i++)
@@ -59,12 +59,12 @@ string Filename(string prefixe, string suffixe, int numero) {
 
 	num = padding + num;
 	
-	// return the file name into a string
-	string filename = prefixe + num + suffixe;
+	// return the file name into a std::string
+	std::string filename = prefixe + num + suffixe;
 	return filename;
 }
 
-void Write_Tp2D_AvgVelocities(string file, int Nx, int Ny, double** x, double** y, double** u, double** v)
+void Write_Tp2D_AvgVelocities(std::string file, int Nx, int Ny, double** x, double** y, double** u, double** v)
 {
 	// Ordered binary file
 	INTEGER4 Debug     = 0;
@@ -145,7 +145,7 @@ void Write_Tp2D_AvgVelocities(string file, int Nx, int Ny, double** x, double** 
 	I = TECEND112();
 }
 
-void Write_Tp2D_Q(string file, int Nx, int Ny, int N, double** x, double** y, double*** u, double*** v, double*** w, double*** q)
+void Write_Tp2D_Q(std::string file, int Nx, int Ny, int N, double** x, double** y, double*** u, double*** v, double*** w, double*** q)
 {
 	// Ordered binary file
 	INTEGER4 Debug     = 0;

@@ -4,13 +4,13 @@
 #include "stats.hpp"
 #include "diffint.hpp"
 
-string filein, fileout;
+std::string filein, fileout;
 
 int main()
 {
 	// Parameters
-	string prefixe = "data/champ";
-	string suffixe = ".dat";
+	std::string prefixe = "data/champ";
+	std::string suffixe = ".dat";
 	int first_filenumber = 1;
 	int N = 20;
 	int Nx = 71;
