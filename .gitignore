@@ -11,9 +11,12 @@
 *.lai
 *.la
 *.a
+<<<<<<< HEAD
 
 # Data file
 data/*
 *.dat
 *.plt
 *.lay
+=======
+>>>>>>> ed18eb66f4dc2d8d0256ae53d7400cc997197f13
