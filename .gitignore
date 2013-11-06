@@ -8,6 +8,7 @@
 *.dylib
 
 # Compiled Static libraries
+lib/*
 *.lai
 *.la
 *.a
@@ -22,3 +23,6 @@ data/*
 *.cpp~
 *.hpp~
 Makefile~
+
+# Netbeans project
+nbproject/*
