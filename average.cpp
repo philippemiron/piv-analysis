@@ -9,18 +9,22 @@ std::string filein, fileout;
 int main()
 {
 	// Parameters
-	std::string prefixe = "data/champ";
+	std::string prefixe = "/home/pissarro/phmir/1-resultat_piv/Ladyf/20131028-Test_meilleures_images(3x32x32_50ov)/B";
 	std::string suffixe = ".dat";
 	int first_filenumber = 1;
-	int N = 20;
-	int Nx = 71;
-	int Ny = 39;
+	int N = 1000;
+	int Nx = 80;
+	int Ny = 50;
 	
 	// Create arrays
 	double** x = Construct2D(Ny, Nx);
 	double** y = Construct2D(Ny, Nx);
-	double*** u = Construct3D(N, Ny, Nx);
-	double*** v = Construct3D(N, Ny, Nx);
+	double** u = Construct2D(Ny, Nx);
+	double** v = Construct2D(Ny, Nx);
+	double** uv = Construct2D(Ny, Nx);
+	double** u2 = Construct2D(Ny, Nx);
+	double** v2 = Construct2D(Ny, Nx);
+	double** uv2 = Construct2D(Ny, Nx);
 
 	// Read the velocities of all the fields
 	for (int i=0; i<N; i++)
@@ -28,26 +32,46 @@ int main()
 		// Get the filename
 		filein = Filename(prefixe, suffixe, i+first_filenumber);
 		// Read and fill up the arrays
-		Read_Tp2D_Velocities(filein, Nx, Ny, i, x, y, u, v);
+		Read_Tp2D_Average(filein, Nx, Ny, i, x, y, u, v, uv, u2, v2, uv2);
 	}
-
+	
 	// Calculate the average
-	double** u_avg = Construct2D(Ny, Nx);
-	double** v_avg = Construct2D(Ny, Nx);
-	Average(Nx, Ny, N, u, u_avg);
-	Average(Nx, Ny, N, v, v_avg);
+	for (int i=0; i < Ny; i++) {
+		for (int j=0; j < Nx; j++) {
+			u[i][j]  /= (double) N;
+			v[i][j]  /= (double) N;
+			uv[i][j]  /= (double) N;
+			u2[i][j] /= (double) N;
+			v2[i][j] /= (double) N;
+			uv2[i][j] /= (double) N;
+		}
+	}
+	
+	// RMS
+	double** u_rms = Construct2D(Ny, Nx);
+	double** v_rms = Construct2D(Ny, Nx);
+	double** uv_rms = Construct2D(Ny, Nx);
+	RMS(Nx, Ny, u, u2, u_rms);
+	RMS(Nx, Ny, v, v2, v_rms);
+	RMS(Nx, Ny, uv, uv2, uv_rms);
+	
 	
 	// Write data
 	fileout = "./average.plt";
-	Write_Tp2D_AvgVelocities(fileout, Nx, Ny, x, y, u_avg, v_avg);
+	Write_Tp2D_AvgVelocities(fileout, Nx, Ny, x, y, u, v, uv, u_rms, v_rms, uv_rms);
 	
 	// Delete arrays created
 	Destruct2D(x);
 	Destruct2D(y);
-	Destruct3D(u);
-	Destruct3D(v);
-	Destruct2D(u_avg);
-	Destruct2D(v_avg);
+	Destruct2D(u);
+	Destruct2D(v);
+	Destruct2D(uv);
+	Destruct2D(u2);
+	Destruct2D(v2);
+	Destruct2D(uv2);
+	Destruct2D(u_rms);
+	Destruct2D(v_rms);
+	Destruct2D(uv_rms);
 	
 	return 0;
 }

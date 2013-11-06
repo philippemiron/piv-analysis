@@ -9,12 +9,12 @@ std::string filein, fileout;
 int main()
 {
 	// Parameters
-	std::string prefixe = "data/champ";
+	std::string prefixe = "20131009-premieres_mesures/B";
 	std::string suffixe = ".dat";
 	int first_filenumber = 1;
-	int N = 10;
-	int Nx = 71;
-	int Ny = 39;
+	int N = 202;
+	int Nx = 54;
+	int Ny = 34;
 	
 	// Create arrays
 	double** x = Construct2D(Ny, Nx);

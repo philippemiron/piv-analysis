@@ -5,33 +5,42 @@
 void Average(int Nx, int Ny, int N, double*** x, double** x_avg) {
 	
 	// Add all the values
-	for (int k=0; k < N; k++)
+	for (int i=0; i < N; i++)
 		for (int j=0; j < Ny; j++)
-			for (int i=0; i < Nx; i++)
-				x_avg[j][i] += x[k][j][i];	
+			for (int k=0; k < Nx; k++)
+				x_avg[j][k] += x[i][j][k];	
 				            
 	
 	// Divide by the number of measurements
-	for (int j=0; j < Ny; j++)
-		for (int i=0; i < Nx; i++)
-			x_avg[j][i] /= (double) N;
+	for (int i=0; i < Ny; i++)
+		for (int j=0; j < Nx; j++)
+			x_avg[i][j] /= (double) N;
 }
 
-void RMS(int Nx, int Ny, int N, double*** vitesse, double*** fluctuation, double** moyenne, double** variance) {
+// Calculate the average of a variable
+void Average(int Nx, int Ny, int N, double*** x, double*** y, double** xy_avg) {
+	
+	// Add all the values
+	for (int i=0; i < N; i++)
+		for (int j=0; j < Ny; j++)
+			for (int k=0; k < Nx; k++)
+				xy_avg[j][k] += x[i][j][k]*y[i][j][k];	
+				            
+	
+	// Divide by the number of measurements
+	for (int i=0; i < Ny; i++)
+		for (int j=0; j < Nx; j++)
+			xy_avg[i][j] /= (double) N;
+}
+
+void RMS(int Nx, int Ny, double** vitesse, double** vitesse_squared, double** rms) {
 	
 	// Soustrait la moyenne au champs de vitesse
-	// RMS = fluctiations^2
-	for (int i=0; i<Nx; i++) {
-		for (int j=0; j < Ny; j++) {
-			for (int k=0; k < N; k++)
+	// RMS = sqrt(fluctiations^2)
+   for (int i=0; i < Ny; i++) {
+			for (int j=0; j < Nx; j++)
 			{
-      		fluctuation[i][j][k] = vitesse[i][j][k] - moyenne[i][j];
-      		variance[i][j] += pow(fluctuation[i][j][k],2);	
+      		rms[i][j] = sqrt(vitesse_squared[i][j] - pow(vitesse[i][j],2));	
 			}
-		}
 	}
-	// Divise par le nombre de valeurs
-	for (int i=0; i<Nx; i++)
-		for (int j=0; j < Ny; j++)
-				variance[i][j] /= N;
 }

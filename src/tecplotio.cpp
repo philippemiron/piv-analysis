@@ -13,6 +13,7 @@ void Read_Tp2D_Velocities(std::string file, int Nx, int Ny, int k, double** x, d
 	std::string stemp;
 	std::getline(iofile, stemp);
 	std::getline(iofile, stemp);
+	std::getline(iofile, stemp);
 	
 	double dtemp;
 	for (int j=0; j<Ny; j++)
@@ -31,6 +32,47 @@ void Read_Tp2D_Velocities(std::string file, int Nx, int Ny, int k, double** x, d
 	iofile.close();
 }
 
+void Read_Tp2D_Average(std::string file, int Nx, int Ny, int k, double** x, double** y, double** u, double** v, double** uv, double** u2, double** v2, double** uv2) {
+	std::ifstream iofile;
+	iofile.open(file.c_str());
+	if(!iofile) { // file couldn't be opened
+		std::cerr << "Error: could not be open file: " << file << std::endl;
+		exit(1);
+	}
+	
+	// saute l'entete dans le fichier
+	std::string stemp;
+	std::getline(iofile, stemp);
+	std::getline(iofile, stemp);
+	std::getline(iofile, stemp);
+	
+	double dtemp1, dtemp2;
+	for (int j=0; j<Ny; j++)
+	{
+		for (int i=0; i<Nx; i++)
+		{
+			// Read x-y coordinates
+			iofile >> x[j][i];
+			iofile >> y[j][i];
+		
+			// Read velocity
+			iofile >> dtemp1;
+			iofile >> dtemp2;
+			
+			u[j][i]  += dtemp1;
+			v[j][i]  += dtemp2;
+			uv[j][i] += dtemp1*dtemp2;
+			
+			u2[j][i]  += pow(dtemp1,2);
+			v2[j][i]  += pow(dtemp2,2);
+			uv2[j][i] += pow(dtemp1*dtemp2,2);
+			
+		}
+	}
+	
+	iofile.close();
+}
+
 std::string Filename(std::string prefixe, std::string suffixe, int numero) {
 
 	// Transform number into substd::string	
@@ -43,15 +85,20 @@ std::string Filename(std::string prefixe, std::string suffixe, int numero) {
 	std::string padding;
 	if (numero < 10)
 	{
-		for (int i=0;i<3;i++)
+		for (int i=0;i<4;i++)
 			padding += "0";
 	}
 	else if (numero < 100)
 	{
-		for (int i=0;i<2;i++)
+		for (int i=0;i<3;i++)
 			padding += "0";
 	}
 	else if (numero < 1000)
+	{
+		for (int i=0;i<2;i++)
+			padding += "0";
+	}
+	else if (numero < 10000)
 	{
 		for (int i=0;i<1;i++)
 			padding += "0";
@@ -64,7 +111,7 @@ std::string Filename(std::string prefixe, std::string suffixe, int numero) {
 	return filename;
 }
 
-void Write_Tp2D_AvgVelocities(std::string file, int Nx, int Ny, double** x, double** y, double** u, double** v)
+void Write_Tp2D_AvgVelocities(std::string file, int Nx, int Ny, double** x, double** y, double** u, double** v, double** uv, double** up, double** vp, double** uvp)
 {
 	// Ordered binary file
 	INTEGER4 Debug     = 0;
@@ -79,7 +126,7 @@ void Write_Tp2D_AvgVelocities(std::string file, int Nx, int Ny, double** x, doub
 	I = TECINI112((char*)"Ordered Zone", /* Name of the entire
 		* dataset.
 		*/
-		(char*)"x y u v",  /* Defines the variables for the data
+		(char*)"x y u v uv u_rms v_rms uv_rms",  /* Defines the variables for the data
 			* file. Each zone must contain each of
 			* the variables listed here. The order
 			* of the variables in the list is used
@@ -135,11 +182,15 @@ void Write_Tp2D_AvgVelocities(std::string file, int Nx, int Ny, double** x, doub
 			&ShrConn);
 			
 	INTEGER4 III = IMax * JMax * KMax;
-   
+
 	I   = TECDAT112(&III, &x[0][0], &IsDouble);
 	I   = TECDAT112(&III, &y[0][0], &IsDouble);
 	I   = TECDAT112(&III, &u[0][0], &IsDouble);
 	I   = TECDAT112(&III, &v[0][0], &IsDouble);
+	I   = TECDAT112(&III, &uv[0][0], &IsDouble);
+	I   = TECDAT112(&III, &up[0][0], &IsDouble);
+	I   = TECDAT112(&III, &vp[0][0], &IsDouble);
+	I   = TECDAT112(&III, &uvp[0][0], &IsDouble);
 
 	// close the grid file
 	I = TECEND112();
