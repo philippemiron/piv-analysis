@@ -1,6 +1,6 @@
 # Set to appropriate C++ compiler
 CCC := icpc
-CPPFLAGS := -O3 -std=c++11 -openmp
+CPPFLAGS := -g -std=c++11 -openmp
 
 # define the target directories.
 TARGETDIR=.

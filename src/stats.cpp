@@ -35,8 +35,7 @@ void Average(int Nx, int Ny, int N, double*** x, double*** y, double** xy_avg) {
 
 void RMS(int Nx, int Ny, double** vitesse, double** vitesse_squared, double** rms) {
 	
-	// Soustrait la moyenne au champs de vitesse
-	// RMS = sqrt(fluctiations^2)
+	// RMS = sqrt(fluctuations^2)
    for (int i=0; i < Ny; i++) {
 			for (int j=0; j < Nx; j++)
 			{

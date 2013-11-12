@@ -5,7 +5,7 @@ void Read_Tp2D_Velocities(std::string file, int Nx, int Ny, int k, double** x, d
 	std::ifstream iofile;
 	iofile.open(file.c_str());
 	if(!iofile) { // file couldn't be opened
-		std::cerr << "Error: could not be open file: " << file << std::endl;
+		std::cerr << "Error: could not open/find file: " << file << std::endl;
 		exit(1);
 	}
 	
@@ -15,7 +15,6 @@ void Read_Tp2D_Velocities(std::string file, int Nx, int Ny, int k, double** x, d
 	std::getline(iofile, stemp);
 	std::getline(iofile, stemp);
 	
-	double dtemp;
 	for (int j=0; j<Ny; j++)
 	{
 		for (int i=0; i<Nx; i++)
@@ -36,7 +35,7 @@ void Read_Tp2D_Average(std::string file, int Nx, int Ny, int k, double** x, doub
 	std::ifstream iofile;
 	iofile.open(file.c_str());
 	if(!iofile) { // file couldn't be opened
-		std::cerr << "Error: could not be open file: " << file << std::endl;
+		std::cerr << "Error: could not open the file: " << file << std::endl;
 		exit(1);
 	}
 	
@@ -51,25 +50,23 @@ void Read_Tp2D_Average(std::string file, int Nx, int Ny, int k, double** x, doub
 	{
 		for (int i=0; i<Nx; i++)
 		{
-			// Read x-y coordinates
-			iofile >> x[j][i];
-			iofile >> y[j][i];
+				// Read x-y coordinates
+				iofile >> x[j][i];
+				iofile >> y[j][i];
 		
-			// Read velocity
-			iofile >> dtemp1;
-			iofile >> dtemp2;
+				// Read velocity
+				iofile >> dtemp1;
+				iofile >> dtemp2;
 			
-			u[j][i]  += dtemp1;
-			v[j][i]  += dtemp2;
-			uv[j][i] += dtemp1*dtemp2;
+				u[j][i]  += dtemp1;
+				v[j][i]  += dtemp2;
+				uv[j][i] += dtemp1*dtemp2;
 			
-			u2[j][i]  += pow(dtemp1,2);
-			v2[j][i]  += pow(dtemp2,2);
-			uv2[j][i] += pow(dtemp1*dtemp2,2);
-			
+				u2[j][i]  += pow(dtemp1,2);
+				v2[j][i]  += pow(dtemp2,2);
+				uv2[j][i] += pow(dtemp1*dtemp2,2);
 		}
 	}
-	
 	iofile.close();
 }
 

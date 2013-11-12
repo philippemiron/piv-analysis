@@ -9,12 +9,14 @@ std::string filein, fileout;
 int main()
 {
 	// Parameters
-	std::string prefixe = "/home/pissarro/phmir/1-resultat_piv/Ladyf/20131028-Test_meilleures_images(3x32x32_50ov)/B";
+	std::string prefixe = "/Users/phil/Dropbox/Ladyf/20131028-Test_meilleures_images(3x32x32_50ov)/B";
 	std::string suffixe = ".dat";
 	int first_filenumber = 1;
 	int N = 1000;
 	int Nx = 80;
 	int Ny = 50;
+	
+// or
 	
 	// Create arrays
 	double** x = Construct2D(Ny, Nx);

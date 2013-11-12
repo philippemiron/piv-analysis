@@ -1,6 +1,6 @@
-# Set to appropriate C++ compiler
+# Using Intel Composer XE compiler
 CCC := icpc
-CPPFLAGS := -O3 -std=c++11 -openmp
+CPPFLAGS := -debug -O0 -std=c++11 -openmp
 
 # define the target directories.
 TARGETDIR=.
@@ -26,9 +26,9 @@ LIBEXT =  ./lib/libtecio_macos.a
 # standard library
 LINK_LIBS= -lgfortran -lpthread -lm -mkl
 
-AVG=$(BINDIR)/average.bin
-Q=$(BINDIR)/q.bin
-F2P=$(BINDIR)/field2points.bin
+AVG=$(BINDIR)/average.app
+Q=$(BINDIR)/q.app
+F2P=$(BINDIR)/field2points.app
 	
 all: $(AVG) $(Q) $(F2P)
 
