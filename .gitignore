@@ -4,6 +4,7 @@
 *.o
 *.bin
 *.app
+/bin/*
 
 # Compiled Dynamic libraries
 *.so
@@ -28,3 +29,7 @@ Makefile~
 
 # Netbeans project
 nbproject/*
+
+# temp files
+*.swp
+*~
