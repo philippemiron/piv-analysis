@@ -1,6 +1,6 @@
 # Set to appropriate C++ compiler
 CCC := icpc
-CPPFLAGS := -g -std=c++11 -openmp
+CPPFLAGS := -g -O2 -std=c++11 -openmp
 
 # define the target directories.
 TARGETDIR=.
@@ -10,6 +10,7 @@ BINDIR=bin
 AVGOBJ := average.o
 QOBJ := q.o
 F2POBJ := field2points.o
+FFTOBJ := fft.o
 SRC := $(wildcard $(SRCDIR)/*.cpp)
 OBJ := $(patsubst %.cpp,%.o,$(wildcard $(SRCDIR)/*.cpp))
 
@@ -18,10 +19,11 @@ MKLDIR := /apps/local/composerxe
 MKLINCLUDE = $(MKLDIR)/mkl/include
 
 # include directories and external libraries
-INCLUDES = -I./lib/tecio/tecsrc -I./src -I$(MKLINCLUDE) -I$(MKLDIR)/include
+INCLUDES = -I./lib/tecio/tecsrc -I./lib/ -I./src -I$(MKLINCLUDE) -I$(MKLDIR)/include
 
 # required external library
-LIBEXT =  ./lib/libtecio_linux.a
+LIBEXT =  ./lib/libtecio_linux.a\
+          ./lib/libfftw3.a    
 
 # standard library
 LINK_LIBS= -mkl
@@ -29,8 +31,9 @@ LINK_LIBS= -mkl
 AVG=$(BINDIR)/average.bin
 Q=$(BINDIR)/q.bin
 F2P=$(BINDIR)/field2points.bin
+FFT=$(BINDIR)/fft.bin
 	
-all: $(AVG) $(Q) $(F2P)
+all: $(AVG) $(Q) $(F2P) $(FFT)
 
 $(AVG): $(OBJ) $(AVGOBJ)
 	$(CCC) $(CPPFLAGS) $(INCLUDES) $(OBJ) $(AVGOBJ) -o $(AVG) $(LIBEXT) $(LINK_LIBS)
@@ -40,12 +43,15 @@ $(Q): $(OBJ) $(QOBJ)
 
 $(F2P): $(OBJ) $(F2POBJ)
 	$(CCC) $(CPPFLAGS) $(INCLUDES) $(OBJ) $(F2POBJ) -o $(F2P) $(LIBEXT) $(LINK_LIBS)
+
+$(FFT): $(OBJ) $(FFTOBJ)
+	$(CCC) $(CPPFLAGS) $(INCLUDES) $(OBJ) $(FFTOBJ) -o $(FFT) $(LIBEXT) $(LINK_LIBS)
 	
 # Compile all source files .cpp into .o files
 $(TARGETDIR)/%.o: $(TARGETDIR)/%.cpp
 	$(CCC) $(CPPFLAGS) $(INCLUDES) -o $@ -c $<
 
 # Clean target deletes all generated files
-REBUILDABLES = $(OBJ) $(AVG) $(Q) $(F2P) $(AVGOBJ) $(QOBJ) $(F2POBJ)
+REBUILDABLES = $(AVG) $(Q) $(F2P) $(FFT) $(AVGOBJ) $(QOBJ) $(F2POBJ) $(FFTOBJ) $(OBJ)
 clean:
 	rm -f $(REBUILDABLES)

@@ -18,6 +18,7 @@
 #include <locale.h>
 #include <algorithm>
 #include <vector>
+#include "fftw3.h"
 //#include <mpi.h>
 
 // LES MACROS LES PLUS UTILES
