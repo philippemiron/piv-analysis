@@ -15,23 +15,23 @@ void Read_Tp2D_Velocities(std::string file, int Nx, int Ny, int k, double** x, d
 	std::getline(iofile, stemp);
 	std::getline(iofile, stemp);
 	
-	for (int j=0; j<Ny; j++)
+	for (int i=0; i<Ny; i++)
 	{
-		for (int i=0; i<Nx; i++)
+		for (int j=0; j<Nx; j++)
 		{
 			// Read x-y coordinates
-			iofile >> x[j][i];
-			iofile >> y[j][i];
+			iofile >> x[i][j];
+			iofile >> y[i][j];
 		
 			// Read velocity x-y
-			iofile >> u[k][j][i];
-			iofile >> v[k][j][i];		
+			iofile >> u[k][i][j];
+			iofile >> v[k][i][j];		
 		}
 	}
 	iofile.close();
 }
 
-void Read_Tp2D_Average(std::string file, int Nx, int Ny, int k, double** x, double** y, double** u, double** v, double** uv, double** u2, double** v2, double** uv2) {
+void Read_Tp2D_Average(std::string file, int Nx, int Ny, int k, double** x, double** y, double** u, double** v, double** uv, double** u2, double** v2) {
 	std::ifstream iofile;
 	iofile.open(file.c_str());
 	if(!iofile) { // file couldn't be opened
@@ -45,27 +45,52 @@ void Read_Tp2D_Average(std::string file, int Nx, int Ny, int k, double** x, doub
 	std::getline(iofile, stemp);
 	std::getline(iofile, stemp);
 	
-	double dtemp1, dtemp2;
-	for (int j=0; j<Ny; j++)
+	double u_temp, v_temp;
+	for (int i=0; i<Ny; i++)
 	{
-		for (int i=0; i<Nx; i++)
+		for (int j=0; j<Nx; j++)
 		{
 				// Read x-y coordinates
-				iofile >> x[j][i];
-				iofile >> y[j][i];
+				iofile >> x[i][j];
+				iofile >> y[i][j];
 		
 				// Read velocity
-				iofile >> dtemp1;
-				iofile >> dtemp2;
+				iofile >> u_temp;
+				iofile >> v_temp;
 			
-				u[j][i]  += dtemp1;
-				v[j][i]  += dtemp2;
-				uv[j][i] += dtemp1*dtemp2;
-			
-				u2[j][i]  += pow(dtemp1,2);
-				v2[j][i]  += pow(dtemp2,2);
-				uv2[j][i] += pow(dtemp1*dtemp2,2);
+				u[i][j]  += u_temp;
+				v[i][j]  += v_temp;
+				
+				uv[i][j] += u_temp*v_temp;
+				u2[i][j]  += pow(u_temp, 2.0);
+				v2[i][j]  += pow(v_temp, 2.0);
 		}
+	}
+	iofile.close();
+}
+
+void Read_Signal(std::string file, int N, double* u, double* v) {
+
+	std::ifstream iofile;
+	iofile.open(file.c_str());
+	if(!iofile) { // file couldn't be opened
+		std::cerr << "Error: could not open the file: " << file << std::endl;
+		exit(1);
+	}
+	
+	// saute l'entete dans le fichier
+	std::string stemp;
+	std::getline(iofile, stemp);
+	std::getline(iofile, stemp);
+	std::getline(iofile, stemp);
+	
+	int itemp;
+	for (int i=0; i<N; i++)
+	{
+				// Read velocities
+				iofile >> itemp; // index i
+				iofile >> u[i];
+				iofile >> v[i];
 	}
 	iofile.close();
 }
@@ -108,7 +133,7 @@ std::string Filename(std::string prefixe, std::string suffixe, int numero) {
 	return filename;
 }
 
-void Write_Tp2D_AvgVelocities(std::string file, int Nx, int Ny, double** x, double** y, double** u, double** v, double** uv, double** up, double** vp, double** uvp)
+void Write_Tp2D_AvgVelocities(std::string file, int Nx, int Ny, double** x, double** y, double** u, double** v, double** up, double** vp, double** uvp)
 {
 	// Ordered binary file
 	INTEGER4 Debug     = 0;
@@ -123,7 +148,7 @@ void Write_Tp2D_AvgVelocities(std::string file, int Nx, int Ny, double** x, doub
 	I = TECINI112((char*)"Ordered Zone", /* Name of the entire
 		* dataset.
 		*/
-		(char*)"x y u v uv u_rms v_rms uv_rms",  /* Defines the variables for the data
+		(char*)"x y u v u_rms v_rms uv_rms",  /* Defines the variables for the data
 			* file. Each zone must contain each of
 			* the variables listed here. The order
 			* of the variables in the list is used
@@ -184,7 +209,6 @@ void Write_Tp2D_AvgVelocities(std::string file, int Nx, int Ny, double** x, doub
 	I   = TECDAT112(&III, &y[0][0], &IsDouble);
 	I   = TECDAT112(&III, &u[0][0], &IsDouble);
 	I   = TECDAT112(&III, &v[0][0], &IsDouble);
-	I   = TECDAT112(&III, &uv[0][0], &IsDouble);
 	I   = TECDAT112(&III, &up[0][0], &IsDouble);
 	I   = TECDAT112(&III, &vp[0][0], &IsDouble);
 	I   = TECDAT112(&III, &uvp[0][0], &IsDouble);
@@ -430,23 +454,51 @@ void Write_Points(int Nx, int Ny, int N, double** x, double** y, double*** u, do
 	char SolutionFileName[128];
 	FILE* fp;
 		
-	for (int j=0; j<Ny; j++)
+	for (int i=0; i<Ny; i++)
 	{
-		for (int i=0; i<Nx; i++)
+		for (int j=0; j<Nx; j++)
 		{
-			sprintf(SolutionFileName, "./points/%02d%02d.dat", i, j);
+			sprintf(SolutionFileName, "./points/%02d%02d.dat", j, i);
 			fp = fopen(SolutionFileName,"w");
 			if(fp == NULL) {
-				printf("Can't open ./points/%02d%02d.dat. Do the folder exists?\n", i, j);
+				printf("Can't open ./points/%02d%02d.dat. Do the folder exists?\n", j, i);
 				exit(0);
 			} 
 			// Ecriture de l'entete pour les fichiers Tecplot
-			fprintf(fp,"variables = t, u, v\n");
-			fprintf(fp,"zone T=\" %02d %02d x= %f y= %f \", I= %d, DATAPACKING=POINT, ZONETYPE=ORDERED\n\n", i, j, x[j][i], y[j][i], N);
-			for (int k=0; k<N; k++)
-				fprintf(fp,"%d %24.10e %24.10e\n", k, u[k][j][i], v[k][j][i]);
+		    fprintf(fp, "TITLE = \"signal\"");
+			fprintf(fp,"variables = n, u, v\n");
+			fprintf(fp,"zone T=\" %02d %02d x= %f y= %f \", I= %d, DATAPACKING=POINT, ZONETYPE=ORDERED\n", j, i, x[i][j], y[i][j], N);
+			
+			for (int k(0); k<N; k++)
+				fprintf(fp,"%d %24.10e %24.10e\n", k, u[k][i][j], v[k][i][j]);
 
 			fclose(fp);	
 		}
 	}
+}
+
+void Write_FFT(int N, fftw_complex* u, fftw_complex* v)
+{
+	// Change the data to point format
+	// all files are saved in points folder and the name
+	// follow NxNy.dat where Nx, Ny are the position of the 
+	// points in the vector field
+	char SolutionFileName[15];
+	sprintf(SolutionFileName, "fft.dat");
+	FILE* fp;
+	fp = fopen(SolutionFileName,"w");
+
+	if(fp == NULL) {
+		printf("Can't open fft.dat.\n");
+		exit(0);
+	} 
+	// Ecriture de l'entete pour les fichiers Tecplot
+    fprintf(fp, "TITLE = \"fft\"");
+	fprintf(fp,"variables = n, u_real, u_imag, v_real, v_imag\n");
+	fprintf(fp,"zone T=\"signal fft\", I= %d, DATAPACKING=POINT, ZONETYPE=ORDERED\n", N);
+	
+	for (int k(0); k<N; k++)
+		fprintf(fp,"%d %24.10e %24.10e %24.10e %24.10e\n", k, u[k][0], u[k][1], v[k][0], v[k][1]);
+
+	fclose(fp);	
 }
