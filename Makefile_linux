@@ -1,5 +1,5 @@
 # Set to appropriate C++ compiler
-CCC := icpc
+CCC := g++
 CPPFLAGS := -g -O2 -std=c++11 -openmp
 
 # define the target directories.
@@ -14,19 +14,15 @@ FFTOBJ := fft.o
 SRC := $(wildcard $(SRCDIR)/*.cpp)
 OBJ := $(patsubst %.cpp,%.o,$(wildcard $(SRCDIR)/*.cpp))
 
-# MKL Directory
-MKLDIR := /apps/local/composerxe
-MKLINCLUDE = $(MKLDIR)/mkl/include
-
 # include directories and external libraries
-INCLUDES = -I./lib/tecio/tecsrc -I./lib/ -I./src -I$(MKLINCLUDE) -I$(MKLDIR)/include
+INCLUDES = -I./lib/tecio/tecsrc -I./lib/ -I./src
 
 # required external library
 LIBEXT =  ./lib/libtecio_linux.a\
-          ./lib/libfftw3.a    
+          ./lib/libfftw3_linux.a    
 
 # standard library
-LINK_LIBS= -mkl
+LINK_LIBS = -lblas -llapack
 
 AVG=$(BINDIR)/average.bin
 Q=$(BINDIR)/q.bin

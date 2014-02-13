@@ -1,6 +1,5 @@
-# Using Intel Composer XE compiler
-CCC := icpc
-CPPFLAGS := -debug -O2 -std=c++11 -openmp
+CCC := g++
+CPPFLAGS := -g -O2 -std=c++11 -fopenmp
 
 # define the target directories.
 TARGETDIR=.
@@ -14,19 +13,15 @@ FFTOBJ := fft.o
 SRC := $(wildcard $(SRCDIR)/*.cpp)
 OBJ := $(patsubst %.cpp,%.o,$(wildcard $(SRCDIR)/*.cpp))
 
-# MKL
-MKLDIR := /opt/intel/composerxe
-MKLINCLUDE = $(MKLDIR)/mkl/include
-
 # include directories and external libraries
-INCLUDES = -I./lib/tecio/tecsrc -I./lib/ -I./src -I$(MKLINCLUDE) -I$(MKLDIR)/include
+INCLUDES = -I./lib/tecio/tecsrc -I./lib/ -I./src 
 
 # required external library
 LIBEXT =  ./lib/libtecio_macos.a\
-          ./lib/libfftw3.a
+          ./lib/libfftw3_macos.a
 
 # standard library
-LINK_LIBS= -lgfortran -lpthread -lm -mkl
+LINK_LIBS= -lblas -llapack
 
 AVG=$(BINDIR)/average.app
 Q=$(BINDIR)/q.app
