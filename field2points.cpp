@@ -1,3 +1,21 @@
+/*
+	Create spatial signal from two dimensionals velocity fields
+    Copyright (C) 2014  Philippe Miron
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/> 
+*/
+
 #include "include.hpp"
 #include "tecplotio.hpp"
 #include "matrix.hpp"
@@ -9,12 +27,12 @@ std::string filein, fileout;
 int main()
 {
 	// Parameters
-	std::string prefixe = "data/champ";
+	std::string prefixe = "/home/pissarro/phmir/1-resultat_piv/Ladyf/140210/all/B";
 	std::string suffixe = ".dat";
 	int first_filenumber = 1;
-	int N = 20;
-	int Nx = 71;
-	int Ny = 39;
+	int N  = 13690;
+	int Nx = 80;
+	int Ny = 50;
 	
 	// Create arrays
 	double** x = Construct2D(Ny, Nx);
