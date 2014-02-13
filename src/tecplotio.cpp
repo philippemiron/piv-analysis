@@ -78,9 +78,8 @@ void Read_Signal(std::string file, int N, double* u, double* v) {
 		exit(1);
 	}
 	
-	// saute l'entete dans le fichier
+	// remove to first comments lines
 	std::string stemp;
-	std::getline(iofile, stemp);
 	std::getline(iofile, stemp);
 	std::getline(iofile, stemp);
 	
@@ -88,7 +87,6 @@ void Read_Signal(std::string file, int N, double* u, double* v) {
 	for (int i=0; i<N; i++)
 	{
 				// Read velocities
-				iofile >> itemp; // index i
 				iofile >> u[i];
 				iofile >> v[i];
 	}
@@ -458,26 +456,26 @@ void Write_Points(int Nx, int Ny, int N, double** x, double** y, double*** u, do
 	{
 		for (int j=0; j<Nx; j++)
 		{
-			sprintf(SolutionFileName, "./points/%02d%02d.dat", j, i);
+			sprintf(SolutionFileName, "./points/signal%03d-%03d.dat", j, i);
 			fp = fopen(SolutionFileName,"w");
 			if(fp == NULL) {
-				printf("Can't open ./points/%02d%02d.dat. Do the folder exists?\n", j, i);
+				printf("Can't open ./points/signal%03d-%03d.dat. Do the folder exists?\n", j, i);
 				exit(0);
-			} 
+			}
+
 			// Ecriture de l'entete pour les fichiers Tecplot
-		    fprintf(fp, "TITLE = \"signal\"");
-			fprintf(fp,"variables = n, u, v\n");
-			fprintf(fp,"zone T=\" %02d %02d x= %f y= %f \", I= %d, DATAPACKING=POINT, ZONETYPE=ORDERED\n", j, i, x[i][j], y[i][j], N);
+		    fprintf(fp, "# x =%15.8E, y =%15.8E\n", x[i][j], y[i][j]);
+			fprintf(fp," VARIABLES = u, v\n");
 			
 			for (int k(0); k<N; k++)
-				fprintf(fp,"%d %24.10e %24.10e\n", k, u[k][i][j], v[k][i][j]);
+				fprintf(fp,"%15.8E %15.8E\n", u[k][i][j], v[k][i][j]);
 
 			fclose(fp);	
 		}
 	}
 }
 
-void Write_FFT(int N, fftw_complex* u, fftw_complex* v)
+void Write_FFT(int Fs, int N, double* power_u, double* power_v)
 {
 	// Change the data to point format
 	// all files are saved in points folder and the name
@@ -494,11 +492,13 @@ void Write_FFT(int N, fftw_complex* u, fftw_complex* v)
 	} 
 	// Ecriture de l'entete pour les fichiers Tecplot
     fprintf(fp, "TITLE = \"fft\"");
-	fprintf(fp,"variables = n, u_real, u_imag, v_real, v_imag\n");
-	fprintf(fp,"zone T=\"signal fft\", I= %d, DATAPACKING=POINT, ZONETYPE=ORDERED\n", N);
-	
-	for (int k(0); k<N; k++)
-		fprintf(fp,"%d %24.10e %24.10e %24.10e %24.10e\n", k, u[k][0], u[k][1], v[k][0], v[k][1]);
+	fprintf(fp,"variables = f, power_u, power_v,\n");
+	fprintf(fp,"zone T=\"signal fft\", I= %d, DATAPACKING=POINT, ZONETYPE=ORDERED\n", N/2+1);
+
+
+	for (int k(0); k<N/2+1; k++)
+		fprintf(fp,"%f %15.8E %15.8E\n", double(Fs*k)/double(N), power_u[k], power_v[k]);
+
 
 	fclose(fp);	
 }
