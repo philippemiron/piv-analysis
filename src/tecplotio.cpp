@@ -475,16 +475,14 @@ void Write_Points(int Nx, int Ny, int N, double** x, double** y, double*** u, do
 	}
 }
 
-void Write_FFT(int Fs, int N, double* power_u, double* power_v)
+void Write_FFT(std::string filename, int Fs, int N, double* power_u, double* power_v)
 {
 	// Change the data to point format
 	// all files are saved in points folder and the name
 	// follow NxNy.dat where Nx, Ny are the position of the 
 	// points in the vector field
-	char SolutionFileName[15];
-	sprintf(SolutionFileName, "fft.dat");
 	FILE* fp;
-	fp = fopen(SolutionFileName,"w");
+	fp = fopen(filename.c_str(),"w");
 
 	if(fp == NULL) {
 		printf("Can't open fft.dat.\n");
