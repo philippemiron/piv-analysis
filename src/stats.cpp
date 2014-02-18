@@ -34,14 +34,15 @@ void Average(int Nx, int Ny, int N, double*** x, double*** y, double** xy_avg) {
 }
 
 // Calculate the average of a 1D variable
-void Average(int N, double* x, double x_avg) {
-
+double Average(int N, double* x) {
+	
 	// Add all the values
+	double x_avg(0);
 	for (int i=0; i < N; i++)
 		x_avg += x[i];				            
 	
 	// Divide by the number of measurements
-	x_avg /= (double) N;
+	return x_avg/double(N);
 }
 
 void RMS(int Nx, int Ny, double** velocity, double** velocity_squared, double** rms) {
