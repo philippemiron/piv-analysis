@@ -1,7 +1,7 @@
 // List of statistics function
 #include "stats.hpp"
 
-// Calculate the average of a variable
+// Calculate the average of a 2d variable
 void Average(int Nx, int Ny, int N, double*** x, double** x_avg) {
 	
 	// Add all the values
@@ -17,7 +17,7 @@ void Average(int Nx, int Ny, int N, double*** x, double** x_avg) {
 			x_avg[i][j] /= (double) N;
 }
 
-// Calculate the average of a variable
+// Calculate the average of the product of 2 variables 
 void Average(int Nx, int Ny, int N, double*** x, double*** y, double** xy_avg) {
 	
 	// Add all the values
@@ -31,6 +31,17 @@ void Average(int Nx, int Ny, int N, double*** x, double*** y, double** xy_avg) {
 	for (int i=0; i < Ny; i++)
 		for (int j=0; j < Nx; j++)
 			xy_avg[i][j] /= (double) N;
+}
+
+// Calculate the average of a 1D variable
+void Average(int N, double* x, double x_avg) {
+
+	// Add all the values
+	for (int i=0; i < N; i++)
+		x_avg += x[i];				            
+	
+	// Divide by the number of measurements
+	x_avg /= (double) N;
 }
 
 void RMS(int Nx, int Ny, double** velocity, double** velocity_squared, double** rms) {
