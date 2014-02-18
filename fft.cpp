@@ -25,131 +25,159 @@
 int main()
 {
 
+
 // Parameters
-std::string filename = "signal2_test.dat";
-int Fs = 204800;
-int samples_per_block = Fs*30;
-int number_of_blocks = 1;
-int N = pow(2,13); // 256 fft samples
-int averages_per_blocks = int(samples_per_block/N)*2-1;
+std::string name = "points/signal";
+std::string fftname = "spectre/fft";
+int imin = 0;
+int imax = 79;
+int jmin = 0;
+int jmax = 49;
+int Fs = 200;
+int samples_per_block = 2738;
+int number_of_blocks = 5;
+int N = pow(2,8);
+int verbose = 0;
 
-// array for power final spectrum
-double* power_u = new double[N/2+1];
-double* power_v = new double[N/2+1];
+// calculate a specto rfor all the indices of the 2D
+// piv data between imin-imax jmin-jmax
+for (int index_i=imin; index_i<=imax; index_i++) {
+	for (int index_j=jmin; index_j<=jmax; index_j++) {
 
-// reading of all the signals
-double* u_all = new double[samples_per_block*number_of_blocks];
-double* v_all = new double[samples_per_block*number_of_blocks];
-Read_Signal(filename, samples_per_block*number_of_blocks, u_all, v_all);
+		std::ostringstream ssi, ssj;
+		ssi << std::setw(3) << std::setfill('0') << index_i;
+		ssj << std::setw(3) << std::setfill('0') << index_j;
+		std::string file_i(ssi.str());
+		std::string file_j(ssj.str());
+		std::string filename = name + file_i + "-" + file_j + ".dat";
+		std::string fft_filename = fftname + file_i + "-" + file_j + ".dat";
 
-int zz=0;
-double rms_u_t(0), rms_v_t(0);
 
-// loop for all the averages fft
-for (int k(0); k<number_of_blocks; k++) {
-	for (int j(0); j<averages_per_blocks; j++) {
-		// Create arrays
-		double* u = new double[N];
-		double* v = new double[N];
-		double* window = new double[N];
+		// number of averages per independant block
+		int averages_per_blocks = int(samples_per_block/N)*2-1;
+		if (samples_per_block - int(samples_per_block/N)*double(N) > N/2)
+			averages_per_blocks++;
 
-		// Retrieve portion of signals
-		int index_skip = k*samples_per_block + j*N/2;
-		for (int i(0); i<N; i++) {
-			u[i] = u_all[index_skip + i];
-			v[i] = v_all[index_skip + i];
+
+		// array for power final spectrum
+		double* power_u = new double[N/2+1];
+		double* power_v = new double[N/2+1];
+
+		// reading of all the signals
+		double* u_all = new double[samples_per_block*number_of_blocks];
+		double* v_all = new double[samples_per_block*number_of_blocks];
+		Read_Signal(filename, samples_per_block*number_of_blocks, u_all, v_all);
+
+		int zz=0;
+		double rms_u_t(0), rms_v_t(0);
+		// loop for all the averages fft
+		for (int k(0); k<number_of_blocks; k++) {
+			for (int j(0); j<averages_per_blocks; j++) {
+				// Create arrays
+				double* u = new double[N];
+				double* v = new double[N];
+				double* window = new double[N];
+
+				// Retrieve portion of signals
+				int index_skip = k*samples_per_block + j*N/2;
+				for (int i(0); i<N; i++) {
+					u[i] = u_all[index_skip + i];
+					v[i] = v_all[index_skip + i];
+				}
+
+				// substract the average to u and v
+				double u_avg = Average(N, u);
+				double v_avg = Average(N, v);
+		
+				// rms of the signal in time
+				for (int i(0); i<N; i++) 
+				{	
+					u[i] -= u_avg;
+					v[i] -= v_avg;
+					rms_u_t += u[i]*u[i];
+					rms_v_t += v[i]*v[i];
+				}
+
+				// windowing
+				double windows_sum = 0.0;
+				for (int i = 0; i < N; i++) {
+					window[i] = rectangular(i, N); // TODO outside of the double for
+					u[i] *= window[i];
+					v[i] *= window[i];
+					windows_sum += window[i]*window[i];
+				}
+
+				// Copy values to complex array
+				fftw_complex* fft_u = new fftw_complex[N];
+				fftw_complex* fft_v = new fftw_complex[N];
+				for (int i(0); i<N; i++) {
+					 fft_u[i][0] = u[i];
+					 fft_u[i][1] = 0;
+					 fft_v[i][0] = v[i];
+					 fft_v[i][1] = 0;
+				}
+
+				/* create plan for forward DFT */
+				fftw_plan plan_u = fftw_plan_dft_1d(N, fft_u, fft_u, FFTW_FORWARD, FFTW_ESTIMATE);
+				fftw_plan plan_v = fftw_plan_dft_1d(N, fft_v, fft_v, FFTW_FORWARD, FFTW_ESTIMATE);
+
+				/* compute transforms, in-place, as many times as de(SolutionFileNamesired */
+				fftw_execute(plan_u);
+				fftw_execute(plan_v);
+
+				// Normalization of the spectrum
+				// multiply by 2 because we keep only 
+				// half of the spectrum (symmetric)
+				double normalization = 2.0*double(1.0/Fs)/windows_sum;
+				for (int i(0); i < N/2+1; ++i){
+					power_u[i] += (fft_u[i][0]*fft_u[i][0] + fft_u[i][1]*fft_u[i][1])*normalization;
+					power_v[i] += (fft_v[i][0]*fft_v[i][0] + fft_v[i][1]*fft_v[i][1])*normalization;
+				}
+				zz++;
+
+				// Delete the plan
+				fftw_destroy_plan(plan_u);
+				fftw_destroy_plan(plan_v);
+				fftw_cleanup();
+
+				// Delete arrays created
+				delete [] u;
+				delete [] v;
+				delete [] window; 
+				delete [] fft_u;
+				delete [] fft_v;
+			}
 		}
 
-		// substract the average to u and v
-		double u_avg(0), v_avg(0);
-		Average(N, u, u_avg);
-		Average(N, v, v_avg);
+		// signal in time rms
+		rms_u_t /= averages_per_blocks*number_of_blocks*N;
+		rms_v_t /= averages_per_blocks*number_of_blocks*N;
 
-		// rms of the signal in time
-		for (int i(0); i<N; i++) 
-		{
-			u[i] -= u_avg;
-			v[i] -= v_avg;
-			rms_u_t += u[i]*u[i];
-			rms_v_t += v[i]*v[i];
-		}
-
-		// windowing
-		double windows_sum = 0.0;
-		for (int i = 0; i < N; i++) {
-			window[i] = hanning(i, N); // TODO outside of the double for
-			u[i] *= window[i];
-			v[i] *= window[i];
-			windows_sum += window[i]*window[i];
-		}
-
-		// Copy values to complex array
-		fftw_complex* fft_u = new fftw_complex[N];
-		fftw_complex* fft_v = new fftw_complex[N];
-		for (int i(0); i<N; i++) {
-			 fft_u[i][0] = u[i];
-			 fft_u[i][1] = 0;
-			 fft_v[i][0] = v[i];
-			 fft_v[i][1] = 0;
-		}
-
-		/* create plan for forward DFT */
-		fftw_plan plan_u = fftw_plan_dft_1d(N, fft_u, fft_u, FFTW_FORWARD, FFTW_ESTIMATE);
-		fftw_plan plan_v = fftw_plan_dft_1d(N, fft_v, fft_v, FFTW_FORWARD, FFTW_ESTIMATE);
-
-		/* compute transforms, in-place, as many times as desired */
-		fftw_execute(plan_u);
-		fftw_execute(plan_v);
-
-		// Normalization of the spectrum
-		// multiply by 2 because we keep only 
-		// half of the spectrum (symmetric)
-		double normalization = 2.0*double(1.0/Fs)/windows_sum;
+		// Average the power spectrum of u and v
+		double rms_u(0), rms_v(0);
 		for (int i(0); i < N/2+1; ++i){
-			power_u[i] += (fft_u[i][0]*fft_u[i][0] + fft_u[i][1]*fft_u[i][1])*normalization;
-			power_v[i] += (fft_v[i][0]*fft_v[i][0] + fft_v[i][1]*fft_v[i][1])*normalization;
+			power_u[i] /= averages_per_blocks*number_of_blocks;
+			power_v[i] /= averages_per_blocks*number_of_blocks;
+			rms_u += power_u[i]*(double(Fs)/double(N));
+			rms_v += power_v[i]*(double(Fs)/double(N));
 		}
-		zz++;
+		
+		if (verbose) {
+		std::cout << "Signal " << index_i << "-" << index_j << std::endl;
+		std::cout << zz << " average has been done." << std::endl;
+		std::cout << "rms_u = " << rms_u_t << " " <<  rms_u << std::endl;
+		std::cout << "rms_v = " << rms_v_t << " " <<  rms_v << std::endl;
+		}
 
-		// Delete the plan
-		fftw_destroy_plan(plan_u);
-		fftw_destroy_plan(plan_v);
-		fftw_cleanup();
+		// Write fft for every point
+		Write_FFT(fft_filename, Fs, N, power_u, power_v);
 
-		// Delete arrays created
-		delete [] u;
-		delete [] v;
-		delete [] window; 
-		delete [] fft_u;
-		delete [] fft_v;
+		delete [] u_all;
+		delete [] v_all;
+		delete [] power_u;
+		delete [] power_v;
 	}
 }
-
-// signal rms
-rms_u_t /= averages_per_blocks*number_of_blocks*N;
-rms_v_t /= averages_per_blocks*number_of_blocks*N;
-
-// Average the power spectrum of u and v
-double rms_u(0), rms_v(0);
-for (int i(0); i < N/2+1; ++i){
-	power_u[i] /= averages_per_blocks*number_of_blocks;
-	power_v[i] /= averages_per_blocks*number_of_blocks;
-	rms_u += power_u[i]*(double(Fs)/double(N));
-	rms_v += power_v[i]*(double(Fs)/double(N));
-}
-
-
-std::cout << zz << " average has been done." << std::endl;
-std::cout << "rms_u = " << rms_u_t << " " <<  rms_u << std::endl;
-std::cout << "rms_v = " << rms_v_t << " " <<  rms_v << std::endl;
-// Write fft for every point
-Write_FFT(Fs, N, power_u, power_v);
-
-delete [] u_all;
-delete [] v_all;
-delete [] power_u;
-delete [] power_v;
-
 
 return 0;
 }
