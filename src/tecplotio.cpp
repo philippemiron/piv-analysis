@@ -82,7 +82,7 @@ void Read_Signal(std::string file, int N, double* u, double* v) {
 	std::string stemp;
 	std::getline(iofile, stemp);
 	std::getline(iofile, stemp);
-	
+
 	int itemp;
 	for (int i=0; i<N; i++)
 	{
@@ -497,7 +497,7 @@ void Write_FFT(int Fs, int N, double* power_u, double* power_v)
 
 
 	for (int k(0); k<N/2+1; k++)
-		fprintf(fp,"%f %15.8E %15.8E\n", double(Fs*k)/double(N), power_u[k], power_v[k]);
+		fprintf(fp,"%f %15.8E %15.8E\n", double(Fs)*double(k)/double(N), power_u[k], power_v[k]);
 
 
 	fclose(fp);	
