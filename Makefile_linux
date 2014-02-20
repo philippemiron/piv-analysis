@@ -11,6 +11,7 @@ AVGOBJ := average.o
 QOBJ := q.o
 F2POBJ := field2points.o
 FFTOBJ := fft.o
+FFTPLANOBJ := fftplan.o
 SRC := $(wildcard $(SRCDIR)/*.cpp)
 OBJ := $(patsubst %.cpp,%.o,$(wildcard $(SRCDIR)/*.cpp))
 
@@ -28,8 +29,9 @@ AVG=$(BINDIR)/average.bin
 Q=$(BINDIR)/q.bin
 F2P=$(BINDIR)/field2points.bin
 FFT=$(BINDIR)/fft.bin
+FFTPLAN=$(BINDIR)/fftplan.bin
 	
-all: $(AVG) $(Q) $(F2P) $(FFT)
+all: $(AVG) $(Q) $(F2P) $(FFT) $(FFTPLAN)
 
 $(AVG): $(OBJ) $(AVGOBJ)
 	$(CCC) $(CPPFLAGS) $(INCLUDES) $(OBJ) $(AVGOBJ) -o $(AVG) $(LIBEXT) $(LINK_LIBS)
@@ -42,12 +44,15 @@ $(F2P): $(OBJ) $(F2POBJ)
 
 $(FFT): $(OBJ) $(FFTOBJ)
 	$(CCC) $(CPPFLAGS) $(INCLUDES) $(OBJ) $(FFTOBJ) -o $(FFT) $(LIBEXT) $(LINK_LIBS)
+
+$(FFTPLAN): $(OBJ) $(FFTPLANOBJ)
+	$(CCC) $(CPPFLAGS) $(INCLUDES) $(OBJ) $(FFTPLANOBJ) -o $(FFTPLAN) $(LIBEXT) $(LINK_LIBS)
 	
 # Compile all source files .cpp into .o files
 $(TARGETDIR)/%.o: $(TARGETDIR)/%.cpp
 	$(CCC) $(CPPFLAGS) $(INCLUDES) -o $@ -c $<
 
 # Clean target deletes all generated files
-REBUILDABLES = $(AVG) $(Q) $(F2P) $(FFT) $(AVGOBJ) $(QOBJ) $(F2POBJ) $(FFTOBJ) $(OBJ)
+REBUILDABLES = $(AVG) $(Q) $(F2P) $(FFT) $(FFTPLAN) $(AVGOBJ) $(QOBJ) $(F2POBJ) $(FFTOBJ) $(FFTPLANOBJ) $(OBJ)
 clean:
 	rm -f $(REBUILDABLES)

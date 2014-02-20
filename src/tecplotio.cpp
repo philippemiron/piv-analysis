@@ -93,6 +93,34 @@ void Read_Signal(std::string file, int N, double* u, double* v) {
 	iofile.close();
 }
 
+
+void Read_FFT(std::string file, int N, double* fft_u, double* fft_v) {
+	
+	std::ifstream iofile;
+	iofile.open(file.c_str());
+	if(!iofile) { // file couldn't be opened
+		std::cerr << "Error: could not open the file: " << file << std::endl;
+		exit(1);
+	}
+	
+	// remove to first comments lines
+	std::string stemp;
+	std::getline(iofile, stemp);
+	std::getline(iofile, stemp);
+
+	double dtemp;
+	for (int i=0; i<N; i++)
+	{
+				// Read frequencies
+				iofile >> dtemp;
+				// Read power spectrum
+				iofile >> fft_u[i];
+				iofile >> fft_v[i];
+	}
+	iofile.close();
+}
+
+
 std::string Filename(std::string prefixe, std::string suffixe, int numero) {
 
 	// Transform number into substd::string	
@@ -475,12 +503,9 @@ void Write_Points(int Nx, int Ny, int N, double** x, double** y, double*** u, do
 	}
 }
 
-void Write_FFT(std::string filename, int Fs, int N, double* power_u, double* power_v)
+void Write_FFT(std::string filename, int Fs, int N, double* fft_u, double* fft_v)
 {
 	// Change the data to point format
-	// all files are saved in points folder and the name
-	// follow NxNy.dat where Nx, Ny are the position of the 
-	// points in the vector field
 	FILE* fp;
 	fp = fopen(filename.c_str(),"w");
 
@@ -490,13 +515,42 @@ void Write_FFT(std::string filename, int Fs, int N, double* power_u, double* pow
 	} 
 	// Ecriture de l'entete pour les fichiers Tecplot
     fprintf(fp, "TITLE = \"fft\"");
-	fprintf(fp,"variables = f, power_u, power_v,\n");
+	fprintf(fp,"variables = f, fft_u, fft_v,\n");
 	fprintf(fp,"zone T=\"signal fft\", I= %d, DATAPACKING=POINT, ZONETYPE=ORDERED\n", N/2+1);
 
 
 	for (int k(0); k<N/2+1; k++)
-		fprintf(fp,"%f %15.8E %15.8E\n", double(Fs)*double(k)/double(N), power_u[k], power_v[k]);
+		fprintf(fp,"%f %15.8E %15.8E\n", double(Fs)*double(k)/double(N), fft_u[k], fft_v[k]);
 
 
 	fclose(fp);	
+}
+
+void Write_FFT_plan(std::string filename, int Fs, int length, int N, double** fft_u, double** fft_v)
+{
+	
+//Opening the file
+std::ofstream myfile(filename.c_str());
+if (myfile.is_open())
+{
+
+	// TP Headlines
+    myfile << "TITLE = \"fft plan\"" << std::endl << "VARIABLES = index, f, fft_u, fft_v" << std::endl;
+    myfile << "zone I=" << N/2+1 << ", J=" << length << ", DATAPACKING=POINT" << std::endl;
+
+    for(int i(0); i<length; i++) {
+		for(int j(0); j<N/2+1; j++) {
+            myfile << i << " " << double(Fs)*double(j)/double(N) << " " << fft_u[i][j] << " " << fft_v[i][j] << std::endl;
+        }
+    }
+
+	// Closing the file
+	myfile.close();
+} 
+else 
+{
+	std::cout << "Can't open output file name: " << filename << std::endl;
+	exit(0);
+}
+
 }
