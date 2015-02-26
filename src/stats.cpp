@@ -51,8 +51,8 @@ void RMS(int Nx, int Ny, double** velocity, double** velocity_squared, double** 
    for (int i=0; i < Ny; i++) {
 			for (int j=0; j < Nx; j++)
 			{
-      		    rms[i][j] = velocity_squared[i][j] - pow(velocity[i][j], 2.0);
-			}
+        rms[i][j] = sqrt(velocity_squared[i][j] - pow(velocity[i][j], 2.0));
+	    }
 	}
 }
 
@@ -62,7 +62,8 @@ void RMS(int Nx, int Ny, double** u, double** v, double** uv, double** rms) {
    for (int i=0; i < Ny; i++) {
 			for (int j=0; j < Nx; j++)
 			{
-      		    rms[i][j] = uv[i][j] - u[i][j]*v[i][j];
+        // no sqrt because this can be negative (!)
+        rms[i][j] = uv[i][j] - u[i][j]*v[i][j];
 			}
 	}
 }
