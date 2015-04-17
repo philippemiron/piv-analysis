@@ -22,13 +22,13 @@
 #include "stats.hpp"
 #include "diffint.hpp"
 
-std::string filein, fileout;
+string filein, fileout;
 
 int main()
 {
 	// Parameters
-	std::string prefixe = "/home/pissarro/phmir/1-resultat_piv/Ladyf/140210/all/B";
-	std::string suffixe = ".dat";
+	string prefixe = "/home/pissarro/phmir/1-resultat_piv/Ladyf/140210/all/B";
+	string suffixe = ".dat";
 	int first_filenumber = 1;
 	int N  = 13690;
 	int Nx = 80;

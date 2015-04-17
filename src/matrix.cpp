@@ -51,21 +51,22 @@ double***  n = new double** [N*Nx];
 double**** x = new double*** [N];
 
 for (int i=0;i<N;i++,n+=Nx) {
-    x[i]=n;
-    for (int j=0;j<Nx;j++,m+=Ny) {
-        n[j]=m;
-        for(int k=0;k<Ny;k++,ptr+=Nz) {
-                m[k]=ptr;
-        }
-    }
+	x[i]=n;
+	for (int j=0;j<Nx;j++,m+=Ny) {
+		n[j]=m;
+		for(int k=0;k<Ny;k++,ptr+=Nz) {
+			m[k]=ptr;
+		}
+	}
 }
+
 return x;
 }
 
 // Delete a 4D matrix
 void Destruct4D(double**** x) {
 	delete [] x[0][0][0];
-   delete [] x[0][0];
+	delete [] x[0][0];
 	delete [] x[0];
 	delete [] x;
 }

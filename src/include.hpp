@@ -21,18 +21,7 @@
 #include "fftw3.h"
 //#include <mpi.h>
 
-// LES MACROS LES PLUS UTILES
-#ifndef signe
-#define signe(a)   ( ((a)>=0.0) ? (1.0) : (-1.0) )
-#endif
-
-#ifndef max
-#define max(a,b)   ( ((a)>(b)) ? (a) : (b) )
-#endif
-
-#ifndef min
-#define min(a,b)   ( ((a)>(b)) ? (b) : (a) )
-#endif
+using namespace std;
 
 // logical variables
 #define TRUE     (1)

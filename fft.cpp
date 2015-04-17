@@ -25,10 +25,9 @@
 int main()
 {
 
-
 // Parameters
-std::string name = "points/signal";
-std::string fftname = "spectre/fft";
+string name = "points/signal";
+string fftname = "spectre/fft";
 int imin = 0;
 int imax = 79;
 int jmin = 0;
@@ -41,19 +40,18 @@ int verbose = 0;
 
 
 // variable for filename creation
-std::string file_i, file_j, filename, fft_filename;
+string file_i, file_j, filename, fft_filename;
 
 // calculate a specto rfor all the indices of the 2D
 // piv data between imin-imax jmin-jmax
 for (int index_i=imin; index_i<=imax; index_i++) {
 	for (int index_j=jmin; index_j<=jmax; index_j++) {
-
 		// Creating filename with index
 		// format is nameXXX-YYY.dat where
 		// X and Y are the indexes in x,y padded with 0
-		std::ostringstream ssi, ssj;
-		ssi << std::setw(3) << std::setfill('0') << index_i;
-		ssj << std::setw(3) << std::setfill('0') << index_j;
+		ostringstream ssi, ssj;
+		ssi << setw(3) << setfill('0') << index_i;
+		ssj << setw(3) << setfill('0') << index_j;
 		file_i = ssi.str();
 		file_j = ssj.str();
 		filename = name + file_i + "-" + file_j + ".dat";
@@ -64,14 +62,13 @@ for (int index_i=imin; index_i<=imax; index_i++) {
 		if (samples_per_block - int(samples_per_block/N)*double(N) > N/2)
 			averages_per_blocks++;
 
-
 		// array for power final spectrum
-		std::vector<double> power_u(N/2+1, 0.0);
-		std::vector<double> power_v(N/2+1, 0.0);
+		vector<double> power_u(N/2+1, 0.0);
+		vector<double> power_v(N/2+1, 0.0);
 
 		// reading of all the signals
-		std::vector<double> u_all(samples_per_block*number_of_blocks, 0.0);
-		std::vector<double> v_all(samples_per_block*number_of_blocks, 0.0);
+		vector<double> u_all(samples_per_block*number_of_blocks, 0.0);
+		vector<double> v_all(samples_per_block*number_of_blocks, 0.0);
 		Read_Signal(filename, samples_per_block*number_of_blocks, &u_all[0], &v_all[0]);
 
 		double rms_u_t(0), rms_v_t(0);
@@ -95,8 +92,7 @@ for (int index_i=imin; index_i<=imax; index_i++) {
 				double v_avg = Average(N, v);
 		
 				// rms of the signal in time
-				for (int i(0); i<N; i++) 
-				{	
+				for (int i(0); i<N; i++) {	
 					u[i] -= u_avg;
 					v[i] -= v_avg;
 					rms_u_t += u[i]*u[i];
@@ -134,7 +130,7 @@ for (int index_i=imin; index_i<=imax; index_i++) {
 				// multiply by 2 because we keep only 
 				// half of the spectrum (symmetric)
 				double normalization = 2.0*double(1.0/Fs)/windows_sum;
-				for (int i(0); i<N/2+1; i++){
+				for (int i(0); i<N/2+1; i++) {
 					power_u[i] += (fft_u[i][0]*fft_u[i][0] + fft_u[i][1]*fft_u[i][1])*normalization;
 					power_v[i] += (fft_v[i][0]*fft_v[i][0] + fft_v[i][1]*fft_v[i][1])*normalization;
 				}
@@ -159,7 +155,7 @@ for (int index_i=imin; index_i<=imax; index_i++) {
 
 		// Average the power spectrum of u and v
 		double rms_u(0), rms_v(0);
-		for (int i(0); i < N/2+1; ++i){
+		for (int i(0); i < N/2+1; ++i) {
 			power_u[i] /= averages_per_blocks*number_of_blocks;
 			power_v[i] /= averages_per_blocks*number_of_blocks;
 			rms_u += power_u[i]*(double(Fs)/double(N));
@@ -167,16 +163,15 @@ for (int index_i=imin; index_i<=imax; index_i++) {
 		}
 		
 		if (verbose) {
-		std::cout << "Signal " << index_i << "-" << index_j << std::endl;
-		std::cout << averages_per_blocks << " average has been done." << std::endl;
-		std::cout << "rms_u = " << rms_u_t << " " <<  rms_u << std::endl;
-		std::cout << "rms_v = " << rms_v_t << " " <<  rms_v << std::endl;
+			cout << "Signal " << index_i << "-" << index_j << endl;
+			cout << averages_per_blocks << " average has been done." << endl;
+			cout << "rms_u = " << rms_u_t << " " <<  rms_u << endl;
+			cout << "rms_v = " << rms_v_t << " " <<  rms_v << endl;
 		}
 
 		// Write fft for every point
 		Write_FFT(fft_filename, Fs, N, &power_u[0], &power_v[0]);
 	}
 }
-
 return 0;
 }

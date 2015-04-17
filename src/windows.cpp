@@ -87,6 +87,3 @@ double sin_window(int i, int N)
 {
 	return sin(M_PI*double(i)/double(N-1));
 }
-
-
-

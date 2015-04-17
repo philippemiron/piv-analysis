@@ -9,8 +9,7 @@ void Average(int Nx, int Ny, int N, double*** x, double** x_avg) {
 		for (int j=0; j < Ny; j++)
 			for (int k=0; k < Nx; k++)
 				x_avg[j][k] += x[i][j][k];	
-				            
-	
+
 	// Divide by the number of measurements
 	for (int i=0; i < Ny; i++)
 		for (int j=0; j < Nx; j++)
@@ -25,8 +24,7 @@ void Average(int Nx, int Ny, int N, double*** x, double*** y, double** xy_avg) {
 		for (int j=0; j < Ny; j++)
 			for (int k=0; k < Nx; k++)
 				xy_avg[j][k] += x[i][j][k]*y[i][j][k];	
-				            
-	
+
 	// Divide by the number of measurements
 	for (int i=0; i < Ny; i++)
 		for (int j=0; j < Nx; j++)
@@ -47,23 +45,23 @@ double Average(int N, double* x) {
 
 void RMS(int Nx, int Ny, double** velocity, double** velocity_squared, double** rms) {
 	
-	// RMS = sqrt(fluctuations^2)
-   for (int i=0; i < Ny; i++) {
-			for (int j=0; j < Nx; j++)
-			{
-        rms[i][j] = sqrt(velocity_squared[i][j] - pow(velocity[i][j], 2.0));
-	    }
+// RMS = sqrt(fluctuations^2)
+for (int i=0; i < Ny; i++) {
+	for (int j=0; j < Nx; j++) {
+		rms[i][j] = sqrt(velocity_squared[i][j] - pow(velocity[i][j], 2.0));
 	}
 }
 
+}
+
 void RMS(int Nx, int Ny, double** u, double** v, double** uv, double** rms) {
-	
-	// RMS = sqrt(fluctuations^2)
-   for (int i=0; i < Ny; i++) {
-			for (int j=0; j < Nx; j++)
-			{
-        // no sqrt because this can be negative (!)
-        rms[i][j] = uv[i][j] - u[i][j]*v[i][j];
-			}
+
+// RMS = sqrt(fluctuations^2)
+for (int i=0; i < Ny; i++) {
+	for (int j=0; j < Nx; j++) {
+  	// no sqrt because this can be negative (!)
+  	rms[i][j] = uv[i][j] - u[i][j]*v[i][j];
 	}
+}
+
 }
