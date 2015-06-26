@@ -11,6 +11,7 @@ AVGSOBJ := average_stereo.o
 PHAAVGOBJ := phase_average.o
 QOBJ := q.o
 F2POBJ := field2points.o
+P2FOBJ := points2field.o
 FFTOBJ := fft.o
 FFTPLANOBJ := fftplan.o
 SRC := $(wildcard $(SRCDIR)/*.cpp)
@@ -31,10 +32,11 @@ AVGS=$(BINDIR)/average_stereo.app
 PHAAVG=$(BINDIR)/phase_average.app
 Q=$(BINDIR)/q.app
 F2P=$(BINDIR)/field2points.app
+P2F=$(BINDIR)/points2field.bin
 FFT=$(BINDIR)/fft.app
 FFTPLAN=$(BINDIR)/fftplan.app
 
-all: $(AVG) $(AVGS) $(PHAAVG) $(Q) $(F2P) $(FFT) $(FFTPLAN)
+all: $(AVG) $(AVGS) $(PHAAVG) $(Q) $(F2P) $(P2F) $(FFT) $(FFTPLAN)
 
 $(AVG): $(OBJ) $(AVGOBJ)
 	$(CCC) $(CPPFLAGS) $(INCLUDES) $(OBJ) $(AVGOBJ) -o $(AVG) $(LIBEXT) $(LINK_LIBS)
@@ -51,6 +53,9 @@ $(Q): $(OBJ) $(QOBJ)
 $(F2P): $(OBJ) $(F2POBJ)
 	$(CCC) $(CPPFLAGS) $(INCLUDES) $(OBJ) $(F2POBJ) -o $(F2P) $(LIBEXT) $(LINK_LIBS)
 
+$(P2F): $(OBJ) $(P2FOBJ)
+	$(CCC) $(CPPFLAGS) $(INCLUDES) $(OBJ) $(P2FOBJ) -o $(P2F) $(LIBEXT) $(LINK_LIBS)
+
 $(FFT): $(OBJ) $(FFTOBJ)
 	$(CCC) $(CPPFLAGS) $(INCLUDES) $(OBJ) $(FFTOBJ) -o $(FFT) $(LIBEXT) $(LINK_LIBS)
 
@@ -62,6 +67,6 @@ $(TARGETDIR)/%.o: $(TARGETDIR)/%.cpp
 	$(CCC) $(CPPFLAGS) $(INCLUDES) -o $@ -c $<
 
 # Clean target deletes all generated files
-REBUILDABLES = $(AVG) $(Q) $(F2P) $(FFT) $(FFTPLAN) $(AVGOBJ) $(QOBJ) $(F2POBJ) $(FFTOBJ) $(FFTPLANOBJ) $(OBJ)
+REBUILDABLES = $(AVG) $(AVGS) $(PHAAVG) $(Q) $(F2P) $(P2F) $(FFT) $(FFTPLAN) $(AVGOBJ) $(AVGSOBJ) $(PHAAVGOBJ) $(QOBJ) $(F2POBJ) $(P2FOBJ) $(FFTOBJ) $(FFTPLANOBJ) $(OBJ)
 clean:
 	rm -f $(REBUILDABLES)
