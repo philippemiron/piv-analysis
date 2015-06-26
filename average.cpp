@@ -28,12 +28,16 @@ int main()
 {
 	
 // Parameters
-string prefixe = "/home/pissarro/phmir/1-donnees_piv/Ladyf/150220-NewNozzle/old_nozzle/all/B";
+vector<string> prefixe(1, "/home/pissarro/phmir/1-donnees_piv/Ladyf/150610-Piston-Trig-VR/s");
+for (size_t i(0); i<prefixe.size(); i++)
+	prefixe[i] += to_string(i+1) + "/B";
+
 string suffixe = ".dat";
 int first_filenumber = 1;
-int N =  2734*3;
-int Nx = 80;
-int Ny = 50;
+int N =  2500;
+int Nx = 153;
+int Ny = 75;
+double avgtime = 0.0;
 
 // Create arrays
 double** x = Construct2D(Ny, Nx);
@@ -45,22 +49,24 @@ double** u2 = Construct2D(Ny, Nx);
 double** v2 = Construct2D(Ny, Nx);
 
 // Read the velocities of all the fields
-for (int i=0; i<N; i++)
-{
-	// Get the filename
-	filein = Filename(prefixe, suffixe, i+first_filenumber);
-	// Read and fill up the arrays
-	Read_Tp2D_Average(filein, Nx, Ny, x, y, u, v, uv, u2, v2);
-}
+for (size_t folder; folder<prefixe.size(); folder++) {
+	for (int i=0; i<N; i++)
+	{
+		// Get the filename
+		filein = Filename(prefixe[folder], suffixe, i+first_filenumber);
+		// Read and fill up the arrays
+		Read_Tp2D_Average(filein, Nx, Ny, x, y, u, v, uv, u2, v2);
+	}
 
-// Calculate the average
-for (int i=0; i < Ny; i++) {
-	for (int j=0; j < Nx; j++) {
-		u[i][j]  /= (double) N;
-		v[i][j]  /= (double) N;
-		uv[i][j]  /= (double) N;
-		u2[i][j] /= (double) N;
-		v2[i][j] /= (double) N;
+	// Calculate the average
+	for (int i=0; i < Ny; i++) {
+		for (int j=0; j < Nx; j++) {
+			u[i][j]  /= (double) N;
+			v[i][j]  /= (double) N;
+			uv[i][j] /= (double) N;
+			u2[i][j] /= (double) N;
+			v2[i][j] /= (double) N;
+		}
 	}
 }
 
@@ -75,7 +81,7 @@ RMS(Nx, Ny, u, v, uv, uv_rms);
 
 // Write data
 fileout = "./average.plt";
-Write_Tp2D_AvgVelocities(fileout, Nx, Ny, x, y, u, v, u_rms, v_rms, uv_rms);
+Write_Tp2D_AvgVelocities(fileout, avgtime, Nx, Ny, x, y, u, v, u_rms, v_rms, uv_rms);
 
 // Delete arrays created
 Destruct2D(x);

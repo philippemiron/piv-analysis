@@ -28,12 +28,15 @@ int main()
 {
 
 // Parameters
-string prefixe = "20131009-premieres_mesures/B";
+vector<string> prefixe(1, "/home/pissarro/phmir/1-donnees_piv/Ladyf/150610-Piston-Trig-VR/s");
+for (size_t i(0); i<prefixe.size(); i++)
+	prefixe[i] += to_string(i+1) + "/B";
+
 string suffixe = ".dat";
 int first_filenumber = 1;
-int N = 202;
-int Nx = 54;
-int Ny = 34;
+int N =  2500;
+int Nx = 153;
+int Ny = 75;
 
 // Create arrays
 double** x = Construct2D(Ny, Nx);
@@ -51,11 +54,13 @@ double*** w = Construct3D(N, Ny, Nx);
 double*** q = Construct3D(N, Ny, Nx);
 
 // Read the velocities of all the fields
-for (int i=0; i<N; i++) {
-	// Get the filename
-	filein = Filename(prefixe, suffixe, i+first_filenumber);
-	// Read and fill up the arrays
-	Read_Tp2D_Velocities(filein, Nx, Ny, i, x, y, u, v);
+for (size_t folder; folder<prefixe.size(); folder++) {
+	for (int i=0; i<N; i++) {
+		// Get the filename
+		filein = Filename(prefixe[folder], suffixe, i+first_filenumber);
+		// Read and fill up the arrays
+		Read_Tp2D_Velocities(filein, Nx, Ny, x, y, u[i], v[i]);
+	}
 }
 
 // derivation calculation

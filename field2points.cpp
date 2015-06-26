@@ -27,12 +27,12 @@ string filein, fileout;
 int main()
 {
 	// Parameters
-	string prefixe = "/home/pissarro/phmir/1-resultat_piv/Ladyf/140210/all/B";
+	string prefixe = "/home/pissarro/phmir/1-donnees_piv/Ladyf/150526-Piston/0.8hz/B";
 	string suffixe = ".dat";
 	int first_filenumber = 1;
-	int N  = 13690;
-	int Nx = 80;
-	int Ny = 50;
+	int N  = 5000;
+	int Nx = 78;
+	int Ny = 100;
 	
 	// Create arrays
 	double** x = Construct2D(Ny, Nx);
@@ -46,7 +46,7 @@ int main()
 		// Get the filename
 		filein = Filename(prefixe, suffixe, i+first_filenumber);
 		// Read and fill up the arrays
-		Read_Tp2D_Velocities(filein, Nx, Ny, i, x, y, u, v);
+		Read_Tp2D_Velocities(filein, Nx, Ny, x, y, u[i], v[i]);
 	}
 	
 	// Write data for every point

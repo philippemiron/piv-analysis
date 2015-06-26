@@ -69,7 +69,7 @@ for (int index_i=imin; index_i<=imax; index_i++) {
 		// reading of all the signals
 		vector<double> u_all(samples_per_block*number_of_blocks, 0.0);
 		vector<double> v_all(samples_per_block*number_of_blocks, 0.0);
-		Read_Signal(filename, samples_per_block*number_of_blocks, &u_all[0], &v_all[0]);
+		Read_Point(filename, samples_per_block*number_of_blocks, u_all.data(), v_all.data());
 
 		double rms_u_t(0), rms_v_t(0);
 		// loop for all the averages fft
