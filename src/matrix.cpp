@@ -1,4 +1,5 @@
 // Construction and destruction of 2D, 3D and 4D matrices.
+#include "matrix.hpp"
 
 /////////////////////
 // Create a 2D matrix
@@ -69,4 +70,39 @@ void Destruct4D(double**** x) {
 	delete [] x[0][0];
 	delete [] x[0];
 	delete [] x;
+}
+
+void Resize(vector2d<double> &vec, int N1, int N2) 
+{
+    vec.resize(N1);
+    for(int i=0; i<N1; i++)
+        vec[i].resize(N2);
+}
+
+void Resize(vector3d<double> &vec, int N1, int N2, int N3) 
+{
+    vec.resize(N1);
+    for(int i=0; i<N1; i++)
+    {
+        vec[i].resize(N2);
+        for(int j=0; j<N2; j++)
+            vec[i][j].resize(N3);
+    }
+}
+void Resize(vector2d<int> &vec, int N1, int N2) 
+{
+    vec.resize(N1);
+    for(int i=0; i<N1; i++)
+        vec[i].resize(N2);
+}
+
+void Resize(vector3d<int> &vec, int N1, int N2, int N3) 
+{
+    vec.resize(N1);
+    for(int i=0; i<N1; i++)
+    {
+        vec[i].resize(N2);
+        for(int j=0; j<N2; j++)
+            vec[i][j].resize(N3);
+    }
 }
