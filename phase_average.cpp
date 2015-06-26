@@ -31,13 +31,42 @@ int main()
 {
 	
 // Parameters
-string prefixe = "/home/pissarro/phmir/1-donnees_piv/Ladyf/150415-Pulse/171733-high/B";
+vector<string> prefixe(77,"/home/pissarro/phmir/1-donnees_piv/Ladyf/150610-Piston-Trig-VR/s");
+for (size_t i(0); i<prefixe.size(); i++)
+	prefixe[i] += to_string(i+1) + "/B";
+
 string suffixe = ".dat";
-int first_filenumber = 1;
-int N =  1000;
-int N_Phase = 40;
-int Nx = 80;
-int Ny = 50;
+int first_filenumber = 200;
+//int N =  5000-first_filenumber+1;
+int N = 550;
+int N_Phase = 550;
+double Flow_Period = 550.0;
+double cam_f =  200.; // Hz
+int Nx = 78;
+int Ny = 100;
+
+// Average convergence
+vector<pair<int, int>> convergence_index;
+
+// Add indexes where convergence will be evaluated
+// make_pair(index_x, index_y)
+// make sure it is between [0, Nx-1] and [0, Ny-1] !
+convergence_index.emplace_back(make_pair(13, 91));
+convergence_index.emplace_back(make_pair(30, 91));
+convergence_index.emplace_back(make_pair(30, 65));
+convergence_index.emplace_back(make_pair(68, 73));
+convergence_index.emplace_back(make_pair(68, 55));
+convergence_index.emplace_back(make_pair(68, 35));
+convergence_index.emplace_back(make_pair(53, 14));
+
+vector2d<double> u_avg_last, v_avg_last;
+vector3d<double> u_avg, v_avg, u_error, v_error;
+Resize(u_avg_last, convergence_index.size(), N_Phase);
+Resize(v_avg_last, convergence_index.size(), N_Phase);
+Resize(u_avg, convergence_index.size(), N_Phase, prefixe.size());
+Resize(v_avg, convergence_index.size(), N_Phase, prefixe.size());
+Resize(u_error, convergence_index.size(), N_Phase, prefixe.size());
+Resize(v_error, convergence_index.size(), N_Phase, prefixe.size());
 
 
 // Create arrays
@@ -51,14 +80,36 @@ double*** uv = Construct3D(N_Phase, Ny, Nx);
 vector<int> count_per_phase(N_Phase, 0);
 
 // Read the velocities of all the fields
-for (int i=0; i<N; i+=N_Phase) {
-	for (int j=0; j<N_Phase; j++) {
-		if (i+j < N) {
-			// Get the filename
-			filein = Filename(prefixe, suffixe, i+j+first_filenumber);
-			// Read and fill up the arrays
-			Read_Tp2D_Average(filein, Nx, Ny, x[j], y[j], u[j], v[j], uv[j], u2[j], v2[j]);
-			count_per_phase[j]++;
+for (size_t folder; folder<prefixe.size(); folder++) {
+	for (int i=0; i<N; i++) {
+		// Calculate index
+		int j = int( floor(fmod(double(i), Flow_Period) * N_Phase / Flow_Period) );
+
+		// Get the filename
+		filein = Filename(prefixe[folder], suffixe, first_filenumber+i);
+
+		// Read and fill up the arrays
+		Read_Tp2D_Average(filein, Nx, Ny, x[j], y[j], u[j], v[j], uv[j], u2[j], v2[j]);
+		count_per_phase[j]++;
+	}
+
+	// Calculate the error convergence of the averaging
+	// use variable v to check convergence
+	for (size_t cp(0); cp<convergence_index.size(); cp++) {
+		int cp_i(convergence_index[cp].first);
+		int cp_j(convergence_index[cp].second);
+
+		for (int j(0); j<N_Phase; j++) {
+			if (count_per_phase[j] != 0) {
+				u_avg[cp][j][folder] = u[j][cp_j][cp_i]/(double) count_per_phase[j];
+				v_avg[cp][j][folder] = v[j][cp_j][cp_i]/(double) count_per_phase[j];
+				
+				u_error[cp][j][folder] = abs(u_avg[cp][j][folder] - u_avg_last[cp][j]);
+				v_error[cp][j][folder] = abs(v_avg[cp][j][folder] - v_avg_last[cp][j]);
+				
+				u_avg_last[cp][j] = u_avg[cp][j][folder];
+				v_avg_last[cp][j] = v_avg[cp][j][folder];
+			}
 		}
 	}
 }
@@ -90,9 +141,14 @@ for (int i=0; i < N_Phase; i++) {
 // Write data
 for (int i=0; i < N_Phase; i++) {
 	fileout = "./phase_average_" + to_string(i) + ".plt";
-	Write_Tp2D_AvgVelocities(fileout, Nx, Ny, x[i], y[i], u[i], v[i], u_rms[i], v_rms[i], uv_rms[i]);
+	Write_Tp2D_AvgVelocities(fileout, double(i)/cam_f, Nx, Ny, x[i], y[i], u[i], v[i], u_rms[i], v_rms[i], uv_rms[i]);
 }
 
+// Write error convergence
+for (size_t i(0); i<convergence_index.size(); i++) {
+	string filename = "avg_convergence_" + to_string(convergence_index[i].first) + "-" + to_string(convergence_index[i].second) + ".plt";
+	Write_Avg_Convergence(filename, convergence_index[i], u_avg[i], v_avg[i], u_error[i], v_error[i]);
+}
 
 // Delete arrays created
 Destruct3D(x);
@@ -107,5 +163,4 @@ Destruct3D(v_rms);
 Destruct3D(uv_rms);
 
 return 0;
-
 }

@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <cmath>
+#include <assert.h>
 #include <string.h>
 #include <strings.h>
 #include <time.h>
@@ -16,9 +17,11 @@
 #include <iomanip>
 #include <fstream>
 #include <locale.h>
+#include <utility>
 #include <algorithm>
 #include <vector>
 #include "fftw3.h"
+
 //#include <mpi.h>
 
 using namespace std;

@@ -1,10 +1,10 @@
 // List of functions to deal with Tecplot files
 #include "tecplotio.hpp"
 
-void Read_Tp2D_Velocities(string file, int Nx, int Ny, int k, double** x, double** y, double*** u, double*** v) {
+void Read_Tp2D_Velocities(string file, int Nx, int Ny, double** x, double** y, double** u, double** v) {
 	ifstream iofile;
 	iofile.open(file.c_str());
-	if(!iofile) { // file couldn't be opened
+	if(!iofile) { 
 		cerr << "Error: could not open/find file: " << file << endl;
 		exit(1);
 	}
@@ -22,8 +22,8 @@ void Read_Tp2D_Velocities(string file, int Nx, int Ny, int k, double** x, double
 			iofile >> y[i][j];
 		
 			// Read velocity x-y
-			iofile >> u[k][i][j];
-			iofile >> v[k][i][j];		
+			iofile >> u[i][j];
+			iofile >> v[i][j];		
 		}
 	}
 	iofile.close();
@@ -32,7 +32,7 @@ void Read_Tp2D_Velocities(string file, int Nx, int Ny, int k, double** x, double
 void Read_Tp2D_Average(string file, int Nx, int Ny, double** x, double** y, double** u, double** v, double** uv, double** u2, double** v2) {
 	ifstream iofile;
 	iofile.open(file.c_str());
-	if(!iofile) { // file couldn't be opened
+	if(!iofile) { 
 		cerr << "Error: could not open the file: " << file << endl;
 		exit(1);
 	}
@@ -65,10 +65,10 @@ void Read_Tp2D_Average(string file, int Nx, int Ny, double** x, double** y, doub
 	iofile.close();
 }
 
-void Read_Tp2D_Average(string file, int Nx, int Ny, double** x, double** y, double** u, double** v, double** w, double** uv, double** uw, double** vw, double** u2, double** v2, double** w2) {
+void Read_Tp2D_Average(string file, int Nx, int Ny, double** x, double** y, double** z, double** u, double** v, double** w, double** uv, double** uw, double** vw, double** u2, double** v2, double** w2) {
 	ifstream iofile;
 	iofile.open(file.c_str());
-	if(!iofile) { // file couldn't be opened
+	if(!iofile) { 
 		cerr << "Error: could not open the file: " << file << endl;
 		exit(1);
 	}
@@ -79,13 +79,13 @@ void Read_Tp2D_Average(string file, int Nx, int Ny, double** x, double** y, doub
 	getline(iofile, stemp);
 	getline(iofile, stemp);
 	
-	double z_temp, u_temp, v_temp, w_temp;
+	double u_temp, v_temp, w_temp;
 	for (int i=0; i<Ny; i++) {
 		for (int j=0; j<Nx; j++) {
 			// Read x-y-z coordinates
 			iofile >> x[i][j];
 			iofile >> y[i][j];
-			iofile >> z_temp;
+			iofile >> z[i][j];
 
 			// Read velocity
 			iofile >> u_temp;
@@ -108,11 +108,11 @@ void Read_Tp2D_Average(string file, int Nx, int Ny, double** x, double** y, doub
 	iofile.close();
 }
 
-void Read_Signal(string file, int N, double* u, double* v) {
+void Read_Point(string file, int N, double* u, double* v) {
 
 	ifstream iofile;
 	iofile.open(file.c_str());
-	if(!iofile) { // file couldn't be opened
+	if(!iofile) { 
 		cerr << "Error: could not open the file: " << file << endl;
 		exit(1);
 	}
@@ -136,7 +136,7 @@ void Read_FFT(string file, int N, double* fft_u, double* fft_v) {
 	
 	ifstream iofile;
 	iofile.open(file.c_str());
-	if(!iofile) { // file couldn't be opened
+	if(!iofile) { 
 		cerr << "Error: could not open the file: " << file << endl;
 		exit(1);
 	}
@@ -192,7 +192,7 @@ string Filename(string prefixe, string suffixe, int numero) {
 	return filename;
 }
 
-void Write_Tp2D_AvgVelocities(string file, int Nx, int Ny, double** x, double** y, double** u, double** v, double** up, double** vp, double** uvp)
+void Write_Tp2D_AvgVelocities(string file, double time, int Nx, int Ny, double** x, double** y, double** u, double** v, double** up, double** vp, double** uvp)
 {
 	// Ordered binary file
 	INTEGER4 Debug     = 0;
@@ -228,8 +228,8 @@ void Write_Tp2D_AvgVelocities(string file, int Nx, int Ny, double** x, double** 
 	INTEGER4 ICellMax                 = 0;
 	INTEGER4 JCellMax                 = 0;
 	INTEGER4 KCellMax                 = 0;
-	double   SolutionTime             = 0.0;
-	INTEGER4 StrandID                 = 0;      /* StaticZone */
+	double   SolutionTime             = time;
+	INTEGER4 StrandID                 = 1;      /* StaticZone */
 	INTEGER4 ParentZn                 = 0;
 	INTEGER4 IsBlock                  = 1;      /* Block */
 	INTEGER4 NFConns                  = 0;
@@ -276,7 +276,7 @@ void Write_Tp2D_AvgVelocities(string file, int Nx, int Ny, double** x, double** 
 	I = TECEND112();
 }
 
-void Write_Tp2D_AvgVelocities(string file, int Nx, int Ny, double** x, double** y, double** u, double** v, double** w, double** up, double** vp, double** wp, double** uvp, double** uwp, double** vwp)
+void Write_Tp2D_AvgVelocities(string file, double time, int Nx, int Ny, double** x, double** y, double** z, double** u, double** v, double** w, double** up, double** vp, double** wp, double** uvp, double** uwp, double** vwp)
 {
 	// Ordered binary file
 	INTEGER4 Debug     = 0;
@@ -291,7 +291,7 @@ void Write_Tp2D_AvgVelocities(string file, int Nx, int Ny, double** x, double** 
 	I = TECINI112((char*)"Ordered Zone", /* Name of the entire
 		* dataset.
 		*/
-		(char*)"x y u v w u_rms v_rms w_rms uv_rms uw_rms vw_rms", /* Defines the variables for the data
+		(char*)"x y z u v w u_rms v_rms w_rms uv_rms uw_rms vw_rms", /* Defines the variables for the data
 																																* file. Each zone must contain each of
 																																* the variables listed here. The order
 																																* of the variables in the list is used
@@ -312,8 +312,8 @@ void Write_Tp2D_AvgVelocities(string file, int Nx, int Ny, double** x, double** 
 	INTEGER4 ICellMax                 = 0;
 	INTEGER4 JCellMax                 = 0;
 	INTEGER4 KCellMax                 = 0;
-	double   SolutionTime             = 0.0;
-	INTEGER4 StrandID                 = 0;      /* StaticZone */
+	double   SolutionTime             = time;
+	INTEGER4 StrandID                 = 1;      /* StaticZone */
 	INTEGER4 ParentZn                 = 0;
 	INTEGER4 IsBlock                  = 1;      /* Block */
 	INTEGER4 NFConns                  = 0;
@@ -350,6 +350,7 @@ void Write_Tp2D_AvgVelocities(string file, int Nx, int Ny, double** x, double** 
 
 	I = TECDAT112(&III, &x[0][0], &IsDouble);
 	I = TECDAT112(&III, &y[0][0], &IsDouble);
+	I = TECDAT112(&III, &z[0][0], &IsDouble);
 	I = TECDAT112(&III, &u[0][0], &IsDouble);
 	I = TECDAT112(&III, &v[0][0], &IsDouble);
   I = TECDAT112(&III, &w[0][0], &IsDouble);
@@ -406,7 +407,7 @@ void Write_Tp2D_Q(string file, int Nx, int Ny, int N, double** x, double** y, do
 		INTEGER4 JCellMax                 = 0;
 		INTEGER4 KCellMax                 = 0;
 		double   SolutionTime             = (double)i;
-		INTEGER4 StrandID                 = i;      /* StaticZone */
+		INTEGER4 StrandID                 = 1;      /* StaticZone */
 		INTEGER4 ParentZn                 = 0;
 		INTEGER4 IsBlock                  = 1;      /* Block */
 		INTEGER4 NFConns                  = 0;
@@ -490,7 +491,7 @@ void Write_Tp2D_Q2(int Nx, int Ny, int N, double** x, double** y, double*** u, d
 	INTEGER4 JCellMax                 = 0;
 	INTEGER4 KCellMax                 = 0;
 	double   SolutionTime             = 0.0;
-	INTEGER4 StrandID                 = 0;      /* StaticZone */
+	INTEGER4 StrandID                 = 1;      /* StaticZone */
 	INTEGER4 ParentZn                 = 0;
 	INTEGER4 IsBlock                  = 1;      /* Block */
 	INTEGER4 NFConns                  = 0;
@@ -553,8 +554,6 @@ void Write_Tp2D_Q2(int Nx, int Ny, int N, double** x, double** y, double*** u, d
 		&Debug,
 		&IsDouble);
 
-
-
 		/*  Ordered Zone */
 		I = TECZNE112((char*)"Ordered Zone",
 			&ZoneType,
@@ -588,7 +587,122 @@ void Write_Tp2D_Q2(int Nx, int Ny, int N, double** x, double** y, double*** u, d
 	} // End of the Strand loop
 }
 
+void Write_Avg_Convergence(string file, pair<int, int>& indexes, vector2d<double>& u_average, vector2d<double>& v_average, vector2d<double>& u_error, vector2d<double>& v_error) 
+{
+
+	// Ordered binary file
+	INTEGER4 Debug     = 0;
+	INTEGER4 IsDouble =  1; // 0=single 1=double
+	INTEGER4 FileType  = 0; // 0=full 1=grid 2=solution
+	INTEGER4 I         = 0; /* Used to track return codes */
+
+	/*
+	* Open the file and write the tecplot datafile
+	* header information
+	*/
+	string title = "Convergence index " + to_string(indexes.first) + "-" + to_string(indexes.second);
+	I = TECINI112((char*)title.c_str(), /* Name of the entire
+		* dataset.
+		*/
+		(char*)"Series U_Avg V_Avg U_Error V_Error",
+		(char*)file.c_str(),
+		(char*)".",      /* Scratch Directory */
+		&FileType,
+		&Debug,
+		&IsDouble);
+	
+	// index vector
+	vector<double> series(u_average[0].size());
+	for (size_t i(0); i<series.size(); i++)
+		series[i] = double(i+1);
+
+
+	// number of phase subdivisons
+	for (size_t i(0); i<u_average.size(); i++) { 
+		/*Ordered Zone Parameters*/
+		INTEGER4 ZoneType = 0; // Ordered
+		INTEGER4 IMax = u_average[i].size(); // number of series
+		INTEGER4 JMax = 1; // y
+		INTEGER4 KMax = 1; // z
+		INTEGER4 III = IMax*JMax*KMax;
+		INTEGER4 ICellMax                 = 0;
+		INTEGER4 JCellMax                 = 0;
+		INTEGER4 KCellMax                 = 0;
+		double   SolutionTime             = (double)i;
+		INTEGER4 StrandID                 = 1;      /* StaticZone */
+		INTEGER4 ParentZn                 = 0;
+		INTEGER4 IsBlock                  = 1;      /* Block */
+		INTEGER4 NFConns                  = 0;
+		INTEGER4 FNMode                   = 0;
+		INTEGER4 TotalNumFaceNodes        = 0;
+		INTEGER4 TotalNumBndryFaces       = 0;
+		INTEGER4 TotalNumBndryConnections = 0;
+		INTEGER4 ShrConn                  = 0; // use first zone connectivity
+
+		/*  Ordered Zone */
+		I = TECZNE112((char*)"Ordered Zone",
+			&ZoneType,
+			&IMax,
+			&JMax,
+			&KMax,
+			&ICellMax,
+			&JCellMax,
+			&KCellMax,
+			&SolutionTime,
+			&StrandID,
+			&ParentZn,
+			&IsBlock,
+			&NFConns,
+			&FNMode,
+			&TotalNumFaceNodes,
+			&TotalNumBndryFaces,
+			&TotalNumBndryConnections,
+			nullptr,
+			nullptr,
+			nullptr,
+			&ShrConn);
+
+		I = TECDAT112(&III, series.data(), &IsDouble);
+		I = TECDAT112(&III, u_average[i].data(), &IsDouble);
+		I = TECDAT112(&III, v_average[i].data(), &IsDouble);
+		I = TECDAT112(&III, u_error[i].data(), &IsDouble);
+		I = TECDAT112(&III, v_error[i].data(), &IsDouble);
+
+	} // End of the Strand loop
+
+	// close the solution file
+	I = TECEND112();
+};
+
 // ASCII format
+void Write_Tp2D_Velocities(string file, int Nx, int Ny, double** x, double** y, double** u, double** v) {
+	ofstream iofile;
+	iofile.open(file.c_str());
+	if(!iofile) { 
+		cerr << "Error: could not open/find file: " << file << endl;
+		exit(1);
+	}
+	
+	// tecplot headers
+	iofile << "TITLE = \"field\"" << endl;
+	iofile << "VARIABLES = \"x\", \"y\", \"u\", \"v\"" << endl;
+  iofile << "ZONE I=" << Ny << ", J=" << Ny << endl;
+	
+	for (int i=0; i<Ny; i++) {
+		for (int j=0; j<Nx; j++) {
+			// Read x-y coordinates
+			iofile << x[i][j] << " ";
+			iofile << y[i][j] << " ";
+		
+			// Read velocity x-y
+			iofile << u[i][j] << " ";
+			iofile << v[i][j] << " ";	
+			iofile << endl;	
+		}
+	}
+	iofile.close();
+}
+
 void Write_Points(int Nx, int Ny, int N, double** x, double** y, double*** u, double*** v)
 {
 	// Change the data to point format
@@ -618,7 +732,7 @@ void Write_Points(int Nx, int Ny, int N, double** x, double** y, double*** u, do
 			fclose(fp);	
 		}
 	}
-}
+};
 
 void Write_FFT(string filename, int Fs, int N, double* fft_u, double* fft_v)
 {
