@@ -32,7 +32,6 @@ int main()
 	int N  = 100;
 	int Nx = 10;
 	int Ny = 10;
-	int first_filenumber = 1;
 	
 	// Create arrays
 	double** x = Construct2D(Ny, Nx);

@@ -80,7 +80,7 @@ double*** uv = Construct3D(N_Phase, Ny, Nx);
 vector<int> count_per_phase(N_Phase, 0);
 
 // Read the velocities of all the fields
-for (size_t folder; folder<prefixe.size(); folder++) {
+for (size_t folder(0); folder<prefixe.size(); folder++) {
 	for (int i=0; i<N; i++) {
 		// Calculate index
 		int j = int( floor(fmod(double(i), Flow_Period) * N_Phase / Flow_Period) );
@@ -142,6 +142,8 @@ for (int i=0; i < N_Phase; i++) {
 for (int i=0; i < N_Phase; i++) {
 	fileout = "./phase_average_" + to_string(i) + ".plt";
 	Write_Tp2D_AvgVelocities(fileout, double(i)/cam_f, Nx, Ny, x[i], y[i], u[i], v[i], u_rms[i], v_rms[i], uv_rms[i]);
+	//fileout = "./phase_average_" + to_string(i) + ".dat";
+	//Write_Tp2D_Velocities(fileout, Nx, Ny, x[i], y[i], u[i], v[i]);
 }
 
 // Write error convergence

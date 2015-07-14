@@ -49,7 +49,7 @@ double** u2 = Construct2D(Ny, Nx);
 double** v2 = Construct2D(Ny, Nx);
 
 // Read the velocities of all the fields
-for (size_t folder; folder<prefixe.size(); folder++) {
+for (size_t folder(0); folder<prefixe.size(); folder++) {
 	for (int i=0; i<N; i++)
 	{
 		// Get the filename

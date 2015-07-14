@@ -54,7 +54,7 @@ double*** w = Construct3D(N, Ny, Nx);
 double*** q = Construct3D(N, Ny, Nx);
 
 // Read the velocities of all the fields
-for (size_t folder; folder<prefixe.size(); folder++) {
+for (size_t folder(0); folder<prefixe.size(); folder++) {
 	for (int i=0; i<N; i++) {
 		// Get the filename
 		filein = Filename(prefixe[folder], suffixe, i+first_filenumber);
