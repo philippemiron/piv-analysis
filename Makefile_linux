@@ -1,6 +1,6 @@
 # Set to appropriate C++ compiler
 CCC := g++
-CPPFLAGS := -g -O2 -std=c++11 -openmp
+CPPFLAGS := -g -Wall -O3 -std=c++11 -fopenmp
 
 # define the target directories.
 TARGETDIR=.
@@ -10,6 +10,7 @@ BINDIR=bin
 AVGOBJ := average.o
 AVGSOBJ := average_stereo.o
 PHAAVGOBJ := phase_average.o
+PHAAVGSOBJ := phase_average_stereo.o
 QOBJ := q.o
 F2POBJ := field2points.o
 P2FOBJ := points2field.o
@@ -31,13 +32,14 @@ LINK_LIBS = -lblas -llapack
 AVG=$(BINDIR)/average.bin
 AVGS=$(BINDIR)/average_stereo.bin
 PHAAVG=$(BINDIR)/phase_average.bin
+PHAAVGS=$(BINDIR)/phase_average_stereo.bin
 Q=$(BINDIR)/q.bin
 F2P=$(BINDIR)/field2points.bin
 P2F=$(BINDIR)/points2field.bin
 FFT=$(BINDIR)/fft.bin
 FFTPLAN=$(BINDIR)/fftplan.bin
 	
-all: $(AVG) $(AVGS) $(PHAAVG) $(Q) $(F2P) $(P2F) $(FFT) $(FFTPLAN)
+all: $(AVG) $(AVGS) $(PHAAVG) $(PHAAVGS) $(Q) $(F2P) $(P2F) $(FFT) $(FFTPLAN)
 
 $(AVG): $(OBJ) $(AVGOBJ)
 	$(CCC) $(CPPFLAGS) $(INCLUDES) $(OBJ) $(AVGOBJ) -o $(AVG) $(LIBEXT) $(LINK_LIBS)
@@ -47,6 +49,9 @@ $(AVGS): $(OBJ) $(AVGSOBJ)
 
 $(PHAAVG): $(OBJ) $(PHAAVGOBJ)
 	$(CCC) $(CPPFLAGS) $(INCLUDES) $(OBJ) $(PHAAVGOBJ) -o $(PHAAVG) $(LIBEXT) $(LINK_LIBS)
+
+$(PHAAVGS): $(OBJ) $(PHAAVGSOBJ)
+	$(CCC) $(CPPFLAGS) $(INCLUDES) $(OBJ) $(PHAAVGSOBJ) -o $(PHAAVGS) $(LIBEXT) $(LINK_LIBS)
 
 $(Q): $(OBJ) $(QOBJ)
 	$(CCC) $(CPPFLAGS) $(INCLUDES) $(OBJ) $(QOBJ) -o $(Q) $(LIBEXT) $(LINK_LIBS)
@@ -68,6 +73,6 @@ $(TARGETDIR)/%.o: $(TARGETDIR)/%.cpp
 	$(CCC) $(CPPFLAGS) $(INCLUDES) -o $@ -c $<
 
 # Clean target deletes all generated files
-REBUILDABLES = $(AVG) $(Q) $(F2P) $(FFT) $(FFTPLAN) $(AVGOBJ) $(QOBJ) $(F2POBJ) $(FFTOBJ) $(FFTPLANOBJ) $(OBJ)
+REBUILDABLES = $(AVG) $(AVGS) $(PHAAVG) $(PHAAVGS) $(Q) $(F2P) $(P2F) $(FFT) $(FFTPLAN) $(AVGOBJ) $(AVGSOBJ) $(PHAAVGOBJ) $(PHAAVGSOBJ) $(QOBJ) $(F2POBJ) $(P2FOBJ) $(FFTOBJ) $(FFTPLANOBJ) $(OBJ)
 clean:
 	rm -f $(REBUILDABLES)

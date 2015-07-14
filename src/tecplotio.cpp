@@ -122,7 +122,6 @@ void Read_Point(string file, int N, double* u, double* v) {
 	getline(iofile, stemp);
 	getline(iofile, stemp);
 
-	int itemp;
 	for (int i=0; i<N; i++) {
 		// Read velocities
 		iofile >> u[i];
@@ -198,13 +197,12 @@ void Write_Tp2D_AvgVelocities(string file, double time, int Nx, int Ny, double**
 	INTEGER4 Debug     = 0;
 	INTEGER4 IsDouble =  1; // 0=single 1=double
 	INTEGER4 FileType  = 0; // 0=full 1=grid 2=solution
-	INTEGER4 I         = 0; /* Used to track return codes */
 
 	/*
 	* Open the file and write the tecplot datafile
 	* header information
 	*/
-	I = TECINI112((char*)"Ordered Zone", /* Name of the entire
+	TECINI112((char*)"Ordered Zone", /* Name of the entire
 		* dataset.
 		*/
 		(char*)"x y u v u_rms v_rms uv_rms", /* Defines the variables for the data
@@ -240,7 +238,7 @@ void Write_Tp2D_AvgVelocities(string file, double time, int Nx, int Ny, double**
 	INTEGER4 ShrConn                  = 0;
 	 
 	/*  Ordered Zone */
-	I = TECZNE112((char*)"Ordered Zone",
+	TECZNE112((char*)"Ordered Zone",
 			&ZoneType,
 			&IMax,
 			&JMax,
@@ -264,16 +262,16 @@ void Write_Tp2D_AvgVelocities(string file, double time, int Nx, int Ny, double**
 			
 	INTEGER4 III = IMax * JMax * KMax;
 
-	I = TECDAT112(&III, &x[0][0], &IsDouble);
-	I = TECDAT112(&III, &y[0][0], &IsDouble);
-	I = TECDAT112(&III, &u[0][0], &IsDouble);
-	I = TECDAT112(&III, &v[0][0], &IsDouble);
-	I = TECDAT112(&III, &up[0][0], &IsDouble);
-	I = TECDAT112(&III, &vp[0][0], &IsDouble);
-	I = TECDAT112(&III, &uvp[0][0], &IsDouble);
+	TECDAT112(&III, &x[0][0], &IsDouble);
+	TECDAT112(&III, &y[0][0], &IsDouble);
+	TECDAT112(&III, &u[0][0], &IsDouble);
+	TECDAT112(&III, &v[0][0], &IsDouble);
+	TECDAT112(&III, &up[0][0], &IsDouble);
+	TECDAT112(&III, &vp[0][0], &IsDouble);
+	TECDAT112(&III, &uvp[0][0], &IsDouble);
 
 	// close the grid file
-	I = TECEND112();
+	TECEND112();
 }
 
 void Write_Tp2D_AvgVelocities(string file, double time, int Nx, int Ny, double** x, double** y, double** z, double** u, double** v, double** w, double** up, double** vp, double** wp, double** uvp, double** uwp, double** vwp)
@@ -282,13 +280,12 @@ void Write_Tp2D_AvgVelocities(string file, double time, int Nx, int Ny, double**
 	INTEGER4 Debug     = 0;
 	INTEGER4 IsDouble =  1; // 0=single 1=double
 	INTEGER4 FileType  = 0; // 0=full 1=grid 2=solution
-	INTEGER4 I         = 0; /* Used to track return codes */
 
 	/*
 	* Open the file and write the tecplot datafile
 	* header information
 	*/
-	I = TECINI112((char*)"Ordered Zone", /* Name of the entire
+	TECINI112((char*)"Ordered Zone", /* Name of the entire
 		* dataset.
 		*/
 		(char*)"x y z u v w u_rms v_rms w_rms uv_rms uw_rms vw_rms", /* Defines the variables for the data
@@ -324,7 +321,7 @@ void Write_Tp2D_AvgVelocities(string file, double time, int Nx, int Ny, double**
 	INTEGER4 ShrConn                  = 0;
 	 
 	/*  Ordered Zone */
-	I = TECZNE112((char*)"Ordered Zone",
+	TECZNE112((char*)"Ordered Zone",
 			&ZoneType,
 			&IMax,
 			&JMax,
@@ -348,21 +345,21 @@ void Write_Tp2D_AvgVelocities(string file, double time, int Nx, int Ny, double**
 			
 	INTEGER4 III = IMax * JMax * KMax;
 
-	I = TECDAT112(&III, &x[0][0], &IsDouble);
-	I = TECDAT112(&III, &y[0][0], &IsDouble);
-	I = TECDAT112(&III, &z[0][0], &IsDouble);
-	I = TECDAT112(&III, &u[0][0], &IsDouble);
-	I = TECDAT112(&III, &v[0][0], &IsDouble);
-  I = TECDAT112(&III, &w[0][0], &IsDouble);
-	I = TECDAT112(&III, &up[0][0], &IsDouble);
-	I = TECDAT112(&III, &vp[0][0], &IsDouble);
-  I = TECDAT112(&III, &wp[0][0], &IsDouble);
-	I = TECDAT112(&III, &uvp[0][0], &IsDouble);
-  I = TECDAT112(&III, &uwp[0][0], &IsDouble);
-  I = TECDAT112(&III, &vwp[0][0], &IsDouble);
+	TECDAT112(&III, &x[0][0], &IsDouble);
+	TECDAT112(&III, &y[0][0], &IsDouble);
+	TECDAT112(&III, &z[0][0], &IsDouble);
+	TECDAT112(&III, &u[0][0], &IsDouble);
+	TECDAT112(&III, &v[0][0], &IsDouble);
+  TECDAT112(&III, &w[0][0], &IsDouble);
+	TECDAT112(&III, &up[0][0], &IsDouble);
+	TECDAT112(&III, &vp[0][0], &IsDouble);
+  TECDAT112(&III, &wp[0][0], &IsDouble);
+	TECDAT112(&III, &uvp[0][0], &IsDouble);
+  TECDAT112(&III, &uwp[0][0], &IsDouble);
+  TECDAT112(&III, &vwp[0][0], &IsDouble);
 
 	// close the grid file
-	I = TECEND112();
+	TECEND112();
 }
 
 void Write_Tp2D_Q(string file, int Nx, int Ny, int N, double** x, double** y, double*** u, double*** v, double*** w, double*** q)
@@ -371,13 +368,12 @@ void Write_Tp2D_Q(string file, int Nx, int Ny, int N, double** x, double** y, do
 	INTEGER4 Debug     = 0;
 	INTEGER4 IsDouble =  1; // 0=single 1=double
 	INTEGER4 FileType  = 0; // 0=full 1=grid 2=solution
-	INTEGER4 I         = 0; /* Used to track return codes */
 
 	/*
 	* Open the file and write the tecplot datafile
 	* header information
 	*/
-	I = TECINI112((char*)"Ordered Zone", /* Name of the entire
+	TECINI112((char*)"Ordered Zone", /* Name of the entire
 		* dataset.
 		*/
 		(char*)"x y u v w q",  /* Defines the variables for the data
@@ -418,7 +414,7 @@ void Write_Tp2D_Q(string file, int Nx, int Ny, int N, double** x, double** y, do
 		INTEGER4 ShrConn                  = 0; // use first zone connectivity
 		 
 		/*  Ordered Zone */
-		I = TECZNE112((char*)"Ordered Zone",
+		TECZNE112((char*)"Ordered Zone",
 			&ZoneType,
 			&IMax,
 			&JMax,
@@ -440,16 +436,16 @@ void Write_Tp2D_Q(string file, int Nx, int Ny, int N, double** x, double** y, do
 			nullptr,
 			&ShrConn);
 
-		I = TECDAT112(&III, &x[0][0], &IsDouble);
-		I = TECDAT112(&III, &y[0][0], &IsDouble);
-		I = TECDAT112(&III, &u[i][0][0], &IsDouble);
-		I = TECDAT112(&III, &v[i][0][0], &IsDouble);
-		I = TECDAT112(&III, &w[i][0][0], &IsDouble);
-		I = TECDAT112(&III, &q[i][0][0], &IsDouble);
+		TECDAT112(&III, &x[0][0], &IsDouble);
+		TECDAT112(&III, &y[0][0], &IsDouble);
+		TECDAT112(&III, &u[i][0][0], &IsDouble);
+		TECDAT112(&III, &v[i][0][0], &IsDouble);
+		TECDAT112(&III, &w[i][0][0], &IsDouble);
+		TECDAT112(&III, &q[i][0][0], &IsDouble);
 	} // End of the Strand loop
 	
 	// close the grid file
-	I = TECEND112();
+	TECEND112();
 }
 
 void Write_Tp2D_Q2(int Nx, int Ny, int N, double** x, double** y, double*** u, double*** v, double*** w, double*** q)
@@ -458,13 +454,12 @@ void Write_Tp2D_Q2(int Nx, int Ny, int N, double** x, double** y, double*** u, d
 	INTEGER4 Debug     = 0;
 	INTEGER4 IsDouble =  1; // 0=single 1=double
 	INTEGER4 FileType  = 1; // 0=full 1=grid 2=solution
-	INTEGER4 I         = 0; /* Used to track return codes */
 
 	/*
 	* Open the file and write the tecplot datafile
 	* header information
 	*/
-	I = TECINI112((char*)"Ordered Zone", /* Name of the entire
+	TECINI112((char*)"Ordered Zone", /* Name of the entire
 		* dataset.
 		*/
 		(char*)"x y",  /* Defines the variables for the data
@@ -502,7 +497,7 @@ void Write_Tp2D_Q2(int Nx, int Ny, int N, double** x, double** y, double*** u, d
 	INTEGER4 ShrConn                  = 0; // use first zone connectivity
 	 
 	/*  Ordered Zone */
-	I = TECZNE112((char*)"Ordered Zone",
+	TECZNE112((char*)"Ordered Zone",
 		&ZoneType,
 		&IMax,
 		&JMax,
@@ -524,11 +519,11 @@ void Write_Tp2D_Q2(int Nx, int Ny, int N, double** x, double** y, double*** u, d
 		nullptr,
 		&ShrConn);
 
-	I = TECDAT112(&III, &x[0][0], &IsDouble);
-	I = TECDAT112(&III, &y[0][0], &IsDouble);
+	TECDAT112(&III, &x[0][0], &IsDouble);
+	TECDAT112(&III, &y[0][0], &IsDouble);
 
 	// close the grid file
-	I = TECEND112();
+	TECEND112();
 	
 	// Loop to export all the other fields
 	// they share the connectivity with the first one
@@ -538,7 +533,7 @@ void Write_Tp2D_Q2(int Nx, int Ny, int N, double** x, double** y, double*** u, d
 		char SolutionFileName[128];
 		sprintf(SolutionFileName, "q%d.plt", i);
 
-		I = TECINI112((char*)"Ordered Zone", /* Name of the entire
+		TECINI112((char*)"Ordered Zone", /* Name of the entire
 		* dataset.
 		*/
 		(char*)"u v w q",  /* Defines the variables for the data
@@ -555,7 +550,7 @@ void Write_Tp2D_Q2(int Nx, int Ny, int N, double** x, double** y, double*** u, d
 		&IsDouble);
 
 		/*  Ordered Zone */
-		I = TECZNE112((char*)"Ordered Zone",
+		TECZNE112((char*)"Ordered Zone",
 			&ZoneType,
 			&IMax,
 			&JMax,
@@ -577,13 +572,13 @@ void Write_Tp2D_Q2(int Nx, int Ny, int N, double** x, double** y, double*** u, d
 			nullptr,
 			&ShrConn);
 
-		I = TECDAT112(&III, &u[i][0][0], &IsDouble);
-		I = TECDAT112(&III, &v[i][0][0], &IsDouble);
-		I = TECDAT112(&III, &w[i][0][0], &IsDouble);
-		I = TECDAT112(&III, &q[i][0][0], &IsDouble);
+		TECDAT112(&III, &u[i][0][0], &IsDouble);
+		TECDAT112(&III, &v[i][0][0], &IsDouble);
+		TECDAT112(&III, &w[i][0][0], &IsDouble);
+		TECDAT112(&III, &q[i][0][0], &IsDouble);
 
 		// close the solution file
-		I = TECEND112();
+		TECEND112();
 	} // End of the Strand loop
 }
 
@@ -594,14 +589,13 @@ void Write_Avg_Convergence(string file, pair<int, int>& indexes, vector2d<double
 	INTEGER4 Debug     = 0;
 	INTEGER4 IsDouble =  1; // 0=single 1=double
 	INTEGER4 FileType  = 0; // 0=full 1=grid 2=solution
-	INTEGER4 I         = 0; /* Used to track return codes */
 
 	/*
 	* Open the file and write the tecplot datafile
 	* header information
 	*/
 	string title = "Convergence index " + to_string(indexes.first) + "-" + to_string(indexes.second);
-	I = TECINI112((char*)title.c_str(), /* Name of the entire
+	TECINI112((char*)title.c_str(), /* Name of the entire
 		* dataset.
 		*/
 		(char*)"Series U_Avg V_Avg U_Error V_Error",
@@ -640,7 +634,7 @@ void Write_Avg_Convergence(string file, pair<int, int>& indexes, vector2d<double
 		INTEGER4 ShrConn                  = 0; // use first zone connectivity
 
 		/*  Ordered Zone */
-		I = TECZNE112((char*)"Ordered Zone",
+		TECZNE112((char*)"Ordered Zone",
 			&ZoneType,
 			&IMax,
 			&JMax,
@@ -662,16 +656,16 @@ void Write_Avg_Convergence(string file, pair<int, int>& indexes, vector2d<double
 			nullptr,
 			&ShrConn);
 
-		I = TECDAT112(&III, series.data(), &IsDouble);
-		I = TECDAT112(&III, u_average[i].data(), &IsDouble);
-		I = TECDAT112(&III, v_average[i].data(), &IsDouble);
-		I = TECDAT112(&III, u_error[i].data(), &IsDouble);
-		I = TECDAT112(&III, v_error[i].data(), &IsDouble);
+		TECDAT112(&III, series.data(), &IsDouble);
+		TECDAT112(&III, u_average[i].data(), &IsDouble);
+		TECDAT112(&III, v_average[i].data(), &IsDouble);
+		TECDAT112(&III, u_error[i].data(), &IsDouble);
+		TECDAT112(&III, v_error[i].data(), &IsDouble);
 
 	} // End of the Strand loop
 
 	// close the solution file
-	I = TECEND112();
+	TECEND112();
 };
 
 // ASCII format
