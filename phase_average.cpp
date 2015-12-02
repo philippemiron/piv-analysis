@@ -41,7 +41,7 @@ int first_filenumber = 200;
 int N = 550;
 int N_Phase = 550;
 double Flow_Period = 550.0;
-double cam_f =  200.; // Hz
+double cam_f =  200.0; // Hz
 int Nx = 78;
 int Ny = 100;
 
@@ -58,6 +58,7 @@ convergence_index.emplace_back(make_pair(68, 73));
 convergence_index.emplace_back(make_pair(68, 55));
 convergence_index.emplace_back(make_pair(68, 35));
 convergence_index.emplace_back(make_pair(53, 14));
+
 
 vector2d<double> u_avg_last, v_avg_last;
 vector3d<double> u_avg, v_avg, u_error, v_error;
@@ -92,26 +93,27 @@ for (size_t folder(0); folder<prefixe.size(); folder++) {
 		Read_Tp2D_Average(filein, Nx, Ny, x[j], y[j], u[j], v[j], uv[j], u2[j], v2[j]);
 		count_per_phase[j]++;
 	}
+	
+  // Evaluate convergence of the average of u and v after each series
+  // at location specify with the convergence indexes
+  for (size_t cp(0); cp<convergence_index.size(); cp++) {
+    int cp_i(convergence_index[cp].first);
+    int cp_j(convergence_index[cp].second);
 
-	// Calculate the error convergence of the averaging
-	// use variable v to check convergence
-	for (size_t cp(0); cp<convergence_index.size(); cp++) {
-		int cp_i(convergence_index[cp].first);
-		int cp_j(convergence_index[cp].second);
-
-		for (int j(0); j<N_Phase; j++) {
-			if (count_per_phase[j] != 0) {
-				u_avg[cp][j][folder] = u[j][cp_j][cp_i]/(double) count_per_phase[j];
-				v_avg[cp][j][folder] = v[j][cp_j][cp_i]/(double) count_per_phase[j];
-				
-				u_error[cp][j][folder] = abs(u_avg[cp][j][folder] - u_avg_last[cp][j]);
-				v_error[cp][j][folder] = abs(v_avg[cp][j][folder] - v_avg_last[cp][j]);
-				
-				u_avg_last[cp][j] = u_avg[cp][j][folder];
-				v_avg_last[cp][j] = v_avg[cp][j][folder];
-			}
-		}
-	}
+    for (int j(0); j<N_Phase; j++) {
+      if (count_per_phase[j] != 0) {
+	      u_avg[cp][j][folder] = u[j][cp_j][cp_i]/(double) count_per_phase[j];
+	      v_avg[cp][j][folder] = v[j][cp_j][cp_i]/(double) count_per_phase[j];
+	
+	      u_error[cp][j][folder] = u_avg[cp][j][folder] - u_avg_last[cp][j];
+	      v_error[cp][j][folder] = v_avg[cp][j][folder] - v_avg_last[cp][j];
+	
+	      // keep last average to calculate error at next file
+	      u_avg_last[cp][j] = u_avg[cp][j][folder];
+	      v_avg_last[cp][j] = v_avg[cp][j][folder];
+      }
+    }
+  }
 }
 
 // Calculate the average
@@ -142,13 +144,13 @@ for (int i=0; i < N_Phase; i++) {
 for (int i=0; i < N_Phase; i++) {
 	fileout = "./phase_average_" + to_string(i) + ".plt";
 	Write_Tp2D_AvgVelocities(fileout, double(i)/cam_f, Nx, Ny, x[i], y[i], u[i], v[i], u_rms[i], v_rms[i], uv_rms[i]);
-	//fileout = "./phase_average_" + to_string(i) + ".dat";
-	//Write_Tp2D_Velocities(fileout, Nx, Ny, x[i], y[i], u[i], v[i]);
+	fileout = "./phase_average_" + to_string(i) + ".dat";
+	Write_Tp2D_Velocities(fileout, Nx, Ny, x[i], y[i], u[i], v[i]);
 }
 
 // Write error convergence
 for (size_t i(0); i<convergence_index.size(); i++) {
-	string filename = "avg_convergence_" + to_string(convergence_index[i].first) + "-" + to_string(convergence_index[i].second) + ".plt";
+	string filename = "./avg_convergence_" + to_string(convergence_index[i].first) + "-" + to_string(convergence_index[i].second) + ".plt";
 	Write_Avg_Convergence(filename, convergence_index[i], u_avg[i], v_avg[i], u_error[i], v_error[i]);
 }
 
