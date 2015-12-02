@@ -28,15 +28,15 @@ int main()
 {
 	
 // Parameters
-vector<string> prefixe(1, "/home/pissarro/phmir/1-donnees_piv/Ladyf/150610-Piston-Trig-VR/s");
-for (size_t i(0); i<prefixe.size(); i++)
-	prefixe[i] += to_string(i+1) + "/B";
+vector<string> prefixe(1, "/home/pissarro/phmir/1-donnees_piv/Ladyf/131009-premieres_mesures/B");
+//for (size_t i(0); i<prefixe.size(); i++)
+//	prefixe[i] += to_string(i+1) + "/B";
 
 string suffixe = ".dat";
 int first_filenumber = 1;
-int N =  2500;
-int Nx = 153;
-int Ny = 75;
+int N =  202;
+int Nx = 54;
+int Ny = 34;
 double avgtime = 0.0;
 
 // Create arrays
@@ -57,16 +57,16 @@ for (size_t folder(0); folder<prefixe.size(); folder++) {
 		// Read and fill up the arrays
 		Read_Tp2D_Average(filein, Nx, Ny, x, y, u, v, uv, u2, v2);
 	}
+}
 
-	// Calculate the average
-	for (int i=0; i < Ny; i++) {
-		for (int j=0; j < Nx; j++) {
-			u[i][j]  /= (double) N;
-			v[i][j]  /= (double) N;
-			uv[i][j] /= (double) N;
-			u2[i][j] /= (double) N;
-			v2[i][j] /= (double) N;
-		}
+// Calculate the average
+for (int i=0; i < Ny; i++) {
+	for (int j=0; j < Nx; j++) {
+		u[i][j]  /= (double) N*prefixe.size();
+		v[i][j]  /= (double) N*prefixe.size();
+		uv[i][j] /= (double) N*prefixe.size();
+		u2[i][j] /= (double) N*prefixe.size();
+		v2[i][j] /= (double) N*prefixe.size();
 	}
 }
 

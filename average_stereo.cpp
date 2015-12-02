@@ -63,20 +63,20 @@ for (size_t folder(0); folder<prefixe.size(); folder++) {
 		// Read and fill up the arrays
 		Read_Tp2D_Average(filein, Nx, Ny, x, y, z, u, v, w, uv, uw, vw, u2, v2, w2);
 	}
+}
 
-	// Calculate the average
-	for (int i=0; i < Ny; i++) {
-		for (int j=0; j < Nx; j++) {
-			u[i][j]  /= (double) N;
-			v[i][j]  /= (double) N;
-			w[i][j]  /= (double) N;
-			uv[i][j] /= (double) N;
-			uw[i][j] /= (double) N;
-			vw[i][j] /= (double) N;
-			u2[i][j] /= (double) N;
-			v2[i][j] /= (double) N;
-			w2[i][j] /= (double) N;
-		}
+// Calculate the average
+for (int i=0; i < Ny; i++) {
+	for (int j=0; j < Nx; j++) {
+		u[i][j]  /= (double) N*prefixe.size();
+		v[i][j]  /= (double) N*prefixe.size();
+		w[i][j]  /= (double) N*prefixe.size();
+		uv[i][j] /= (double) N*prefixe.size();
+		uw[i][j] /= (double) N*prefixe.size();
+		vw[i][j] /= (double) N*prefixe.size();
+		u2[i][j] /= (double) N*prefixe.size();
+		v2[i][j] /= (double) N*prefixe.size();
+		w2[i][j] /= (double) N*prefixe.size();
 	}
 }
 
