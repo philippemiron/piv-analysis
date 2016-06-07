@@ -21,9 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 #include "include.hpp"
 #include "tecplotio.hpp"
-#include "matrix.hpp"
 #include "stats.hpp"
-#include "diffint.hpp"
 
 string filein, fileout;
 
@@ -41,7 +39,7 @@ int first_filenumber = 200;
 int N = 550;
 int N_Phase = 550;
 double Flow_Period = 550.0;
-double cam_f =  200.0; // Hz
+//double cam_f =  200.0; // Hz
 int Nx = 78;
 int Ny = 100;
 
@@ -82,6 +80,7 @@ vector<int> count_per_phase(N_Phase, 0);
 
 // Read the velocities of all the fields
 for (size_t folder(0); folder<prefixe.size(); folder++) {
+	cout << folder << endl;
 	for (int i=0; i<N; i++) {
 		// Calculate index
 		int j = int( floor(fmod(double(i), Flow_Period) * N_Phase / Flow_Period) );
@@ -143,9 +142,9 @@ for (int i=0; i < N_Phase; i++) {
 // Write data
 for (int i=0; i < N_Phase; i++) {
 	fileout = "./phase_average_" + to_string(i) + ".plt";
-	Write_Tp2D_AvgVelocities(fileout, double(i)/cam_f, Nx, Ny, x[i], y[i], u[i], v[i], u_rms[i], v_rms[i], uv_rms[i]);
+	//Write_Tp2D_AvgVelocities(fileout, double(i)/cam_f, Nx, Ny, x[i], y[i], u[i], v[i], u_rms[i], v_rms[i], uv_rms[i]);
 	fileout = "./phase_average_" + to_string(i) + ".dat";
-	Write_Tp2D_Velocities(fileout, Nx, Ny, x[i], y[i], u[i], v[i]);
+	//Write_Tp2D_Velocities(fileout, Nx, Ny, x[i], y[i], u[i], v[i]);
 }
 
 // Write error convergence

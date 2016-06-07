@@ -18,9 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 #include "include.hpp"
 #include "tecplotio.hpp"
-#include "matrix.hpp"
 #include "stats.hpp"
-#include "diffint.hpp"
 
 string filein, fileout;
 
@@ -28,15 +26,15 @@ int main()
 {
 	
 // Parameters
-vector<string> prefixe(1, "/home/pissarro/phmir/1-donnees_piv/Ladyf/131009-premieres_mesures/B");
+vector<string> prefixe(1, "/home/pissarro/phmir/1-donnees_piv/Ladyf/150610-Piston-Trig-VR/pa_all/dat/phase_average_");
 //for (size_t i(0); i<prefixe.size(); i++)
 //	prefixe[i] += to_string(i+1) + "/B";
 
 string suffixe = ".dat";
-int first_filenumber = 1;
-int N =  202;
-int Nx = 54;
-int Ny = 34;
+int first_filenumber = 0;
+int N =  550;
+int Nx = 78;
+int Ny = 100;
 double avgtime = 0.0;
 
 // Create arrays
@@ -54,6 +52,7 @@ for (size_t folder(0); folder<prefixe.size(); folder++) {
 	{
 		// Get the filename
 		filein = Filename(prefixe[folder], suffixe, i+first_filenumber);
+		cout << filein << endl;
 		// Read and fill up the arrays
 		Read_Tp2D_Average(filein, Nx, Ny, x, y, u, v, uv, u2, v2);
 	}

@@ -46,10 +46,11 @@ void Read_Tp2D_Average(string file, int Nx, int Ny, double** x, double** y, doub
 	double u_temp, v_temp;
 	for (int i=0; i<Ny; i++) {
 		for (int j=0; j<Nx; j++) {
+		
 			// Read x-y coordinates
 			iofile >> x[i][j];
 			iofile >> y[i][j];
-	
+			
 			// Read velocity
 			iofile >> u_temp;
 			iofile >> v_temp;
@@ -167,6 +168,7 @@ string Filename(string prefixe, string suffixe, int numero) {
 	
 	// Adding padding of 0
 	string padding;
+	/*
 	if (numero < 10) {
 		for (int i=0;i<4;i++)
 			padding += "0";
@@ -183,7 +185,7 @@ string Filename(string prefixe, string suffixe, int numero) {
 		for (int i=0;i<1;i++)
 			padding += "0";
 	}
-
+  */ 
 	num = padding + num;
 	
 	// return the file name into a string

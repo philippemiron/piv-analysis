@@ -31,5 +31,3 @@ fft.bin
 I/O files format
 	- all I/O files are based on Tecplot360 format
 	- the TecIO library can be used to generate binary file format if needed see details here http://www.tecplot.com/downloads/tecio-library/
-
-

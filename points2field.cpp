@@ -18,9 +18,6 @@
 
 #include "include.hpp"
 #include "tecplotio.hpp"
-#include "matrix.hpp"
-#include "stats.hpp"
-#include "diffint.hpp"
 
 string filein, fileout;
 

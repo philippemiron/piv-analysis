@@ -22,12 +22,6 @@
 #include <vector>
 #include "fftw3.h"
 
-//#include <mpi.h>
-
 using namespace std;
-
-// logical variables
-#define TRUE     (1)
-#define FALSE    (0)
 
 #endif

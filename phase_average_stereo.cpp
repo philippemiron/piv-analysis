@@ -21,9 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 #include "include.hpp"
 #include "tecplotio.hpp"
-#include "matrix.hpp"
 #include "stats.hpp"
-#include "diffint.hpp"
 
 string filein, fileout;
 
