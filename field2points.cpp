@@ -24,10 +24,10 @@ string filein, fileout;
 int main()
 {
 	// Parameters
-	string prefixe = "/home/pissarro/phmir/1-donnees_piv/Ladyf/150526-Piston/0.8hz/B";
+	string prefixe = "/Users/phil/Desktop/fix/phase_average_";
 	string suffixe = ".dat";
-	int first_filenumber = 1;
-	int N  = 5000;
+	int first_filenumber = 0;
+	int N  = 550;
 	int Nx = 78;
 	int Ny = 100;
 	

@@ -40,7 +40,7 @@ int verbose = 0;
 // variable for filename creation
 string file_i, file_j, filename, fft_filename;
 
-// calculate a specto rfor all the indices of the 2D
+// calculate a spectre for all the indices of the 2D
 // piv data between imin-imax jmin-jmax
 for (int index_i=imin; index_i<=imax; index_i++) {
 	for (int index_j=jmin; index_j<=jmax; index_j++) {

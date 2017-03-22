@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.3)
 project(piv)
 
 # Make sure to compile and link with g++-5/6
+set(CMAKE_CXX_COMPILER "/usr/local/bin/g++-6")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -fopenmp -lblas -llapack -std=c++11")
 
 include_directories(lib/tecio/tecsrc)
